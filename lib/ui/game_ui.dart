@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/game_cubit.dart';
@@ -61,7 +61,7 @@ class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
               cubit: _gameBloc,
               builder: (context, state) {
                 if (state is GameLoading) {
-                  return CircularProgressIndicator();
+                  return const Offstage();
                 }
                 if (state is GameLoaded) {
                   if (state.screen == Screen.Home) {

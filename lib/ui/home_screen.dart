@@ -1,7 +1,7 @@
 import 'package:flame/flame.dart';
 import 'package:flame/spritesheet.dart';
 import 'package:flame/widgets/sprite_button.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                'High Score: ${state.highScore}'.text.orange100.make(),
+                'High Score: ${state.highScore}'.text.xl.orange100.make(),
                 Expanded(child: const Offstage()),
                 FittedBox(child: 'MOONSHOT'.text.yellow500.xl6.make()),
                 Expanded(child: const Offstage()),

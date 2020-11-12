@@ -36,6 +36,7 @@ dev_dependencies:
   flutter_bloc:
   flutter_test:
     sdk: flutter
+  google_fonts:
   json_store:
 
 # For information on the generic Dart part of this file, see the
@@ -78,9 +79,5 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-  fonts:
-    - family: Retro
-      fonts:
-        - asset: assets/fonts/retro.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

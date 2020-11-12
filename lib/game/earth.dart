@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
-import 'package:flutter/material.dart';
 
 import 'utils.dart';
 

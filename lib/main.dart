@@ -1,6 +1,7 @@
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:json_store/json_store.dart';
 
 import 'cubit/game_cubit.dart';
@@ -36,7 +37,11 @@ class GameApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: 'Retro'),
+      theme: ThemeData(
+        textTheme: GoogleFonts.stalinistOneTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
       home: BlocProvider.value(
         value: game.gameCubit,
         child: Scaffold(

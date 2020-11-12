@@ -5,14 +5,15 @@ import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
 import 'package:flame/sprite.dart';
-import 'package:moonshot/game/utils.dart';
 
 import 'enemy.dart';
 import 'moonshot_game.dart';
+import 'utils.dart';
 
 class Bullet extends SpriteComponent with Resizable {
   final MoonshotGame _game;
   final double targetAngle;
+  bool used = false;
 
   Bullet(this._game, this.targetAngle, double initialX, double initialY)
       : super.fromSprite(6, 12, Sprite('bullet.png')) {
@@ -40,10 +41,13 @@ class Bullet extends SpriteComponent with Resizable {
     _game.components.forEach((component) {
       if (component is Enemy) {
         if (checkForCollision(collisionBox, component.collisionBox)) {
-          component.shot();
-          _game.score();
-          _game.markToRemove(component);
-          _game.markToRemove(this);
+          if (!used) {
+            used = true;
+            component.shot();
+            _game.score();
+            _game.markToRemove(component);
+            _game.markToRemove(this);
+          }
         }
       }
     });

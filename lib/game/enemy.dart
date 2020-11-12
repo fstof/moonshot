@@ -32,7 +32,7 @@ class Enemy extends SpriteComponent with Resizable {
   Enemy(
     this._game, {
     this.haveChildren = true,
-    double size = 32,
+    double size = 64,
     double speed,
     this.isChild = false,
   }) : super.fromSprite(size, size, sheet.getSprite(0, rnd.nextInt(3))) {
@@ -43,28 +43,28 @@ class Enemy extends SpriteComponent with Resizable {
   }
 
   void shot() {
-    if (haveChildren && rnd.nextBool() && this.y < size.height / 2) {
+    if (haveChildren && rnd.nextBool() && y < size.height / 2) {
       _game.add(
         Enemy(
           _game,
           haveChildren: false,
-          size: this.width / 2,
+          size: width / 2,
           speed: movementSpeed * 0.5,
           isChild: true,
         )
-          ..x = this.x
-          ..y = this.y,
+          ..x = x + 10
+          ..y = y,
       );
       _game.add(
         Enemy(
           _game,
           haveChildren: false,
-          size: this.width / 2,
+          size: width / 2,
           speed: movementSpeed * 0.5,
           isChild: true,
         )
-          ..x = this.x
-          ..y = this.y,
+          ..x = x - 10
+          ..y = y,
       );
     }
   }

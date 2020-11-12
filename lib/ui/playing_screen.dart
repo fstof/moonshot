@@ -14,7 +14,7 @@ class PlayingScreen extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              'Score: ${state.score}'.text.orange100.make(),
+              'Score: ${state.score}'.text.xl.orange100.make(),
             ],
           );
         } else {

@@ -8,10 +8,10 @@ import 'package:flame/gestures.dart';
 import 'package:flame/time.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:moonshot/game/background.dart';
 
 import '../cubit/game_cubit.dart';
 import '../ui/enums.dart';
+import 'background.dart';
 import 'earth.dart';
 import 'enemy.dart';
 import 'gun.dart';

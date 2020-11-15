@@ -3,12 +3,13 @@ import 'dart:ui';
 import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
+import 'package:flame/sprite.dart';
 
 import 'utils.dart';
 
-class Earth extends PositionComponent with Resizable {
-  Earth() : super() {
-    anchor = Anchor.center;
+class Earth extends SpriteComponent with Resizable {
+  Earth() : super.fromSprite(128.0, 32.0, Sprite('earth.png')) {
+    anchor = Anchor.bottomCenter;
   }
 
   @override
@@ -18,22 +19,6 @@ class Earth extends PositionComponent with Resizable {
     y = (size.height);
     width = size.width;
     height = 100;
-  }
-
-  @override
-  void render(Canvas c) {
-    Paint blue = Paint()..color = Color(0xff0000ff);
-    Paint green = Paint()..color = Color(0xff00ff00);
-    c.drawRect(
-        Rect.fromCenter(
-          center: Offset(x, y),
-          width: width,
-          height: height,
-        ),
-        blue);
-    c.drawCircle(Offset(x * 0.1, y + 25), 50, green);
-    c.drawCircle(Offset(x * 1.5, y + 60), 100, green);
-    c.drawCircle(Offset(x, y + 160), 200, green);
   }
 
   CollisionBox get collisionBox => CollisionBox(

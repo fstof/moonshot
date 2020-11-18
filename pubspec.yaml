@@ -22,6 +22,8 @@ environment:
 
 dependencies:
   equatable:
+  firebase_analytics:
+  firebase_core:
   flame:
   flutter:
     sdk: flutter

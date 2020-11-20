@@ -1,10 +1,5 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
-
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
 #   pull_request:
@@ -15,32 +10,62 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
+    name: Build the production artifact
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Setup Java
-      - uses: actions/setup-java@v1
+      - name: Setup Java environment
+        uses: actions/setup-java@v1
         with:
           java-version: 12.x
 
-      # Setup the flutter environment.
-      - uses: subosito/flutter-action@v1
+      - name: Setup Flutter environment
+        uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
 
-      # Get flutter dependencies.
-      - run: flutter pub get
-      - run: flutter build apk
+      - name: Decrypt google services 
+        run: ./.github/scripts/decrypt-google-services.sh
+        env:
+          GOOGLE_SERVICES_SECRET: ${{ secrets.GOOGLE_SERVICES_SECRET }}
+
+      - name: Decrypt signing keys 
+        run: ./.github/scripts/decrypt-upload-key.sh
+        env:
+          UPLOAD_KEY_SECRET: ${{ secrets.UPLOAD_KEY_SECRET }}
       
-      # Upload generated apk to the artifacts.
-      - uses: actions/upload-artifact@v1
+      - name: Replace admob app id
+        uses: datamonsters/replace-action
         with:
-          name: release-apk
-          path: build/app/outputs/apk/release/*.apk
+          files: "android/app/src/prod/res/values/strings.xml, lib/main_prod.dart"
+          replacements: 'ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx=${{ secrets.AD_MOB_APP_ID }}'
+      
+      - name: Replace admob banner unit id
+        uses: datamonsters/replace-action
+        with:
+          files: "lib/main_prod.dart"
+          replacements: 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx=${{ secrets.AD_MOB_BANNER_UNIT_ID }}'
+
+      - name: Fetch package dependencies
+        run: flutter pub get
+
+      - name: Build the bundle
+        run: flutter build appbundle --flavor prod -t lib/main_prod.dart --build-number=${GITHUB_RUN_NUMBER}
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/prodRelease/app-prod-release.aab
+      
+      - name: Publish to Google Play Console
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: dev.stofberg.moonshot
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          mappingFile: build/app/outputs/mapping/prod/release/mapping.txt

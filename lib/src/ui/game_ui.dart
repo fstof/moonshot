@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/game_cubit.dart';
+import '../services/app_ads.dart';
 import 'crash_screen.dart';
 import 'enums.dart';
 import 'home_screen.dart';
@@ -17,25 +18,21 @@ class GameUI extends StatefulWidget {
 }
 
 class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
-  StreamSubscription gameStateListener;
-  StreamSubscription scoreListener;
-
   GameCubit _gameBloc;
 
   @override
   void initState() {
     super.initState();
     _gameBloc = BlocProvider.of(context);
-
     WidgetsBinding.instance.addObserver(this);
+    AppAds.init(_gameBloc);
   }
 
   @override
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
-    gameStateListener?.cancel();
-    scoreListener?.cancel();
+    AppAds.dispose();
   }
 
   @override

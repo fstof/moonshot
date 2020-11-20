@@ -1,3 +1,4 @@
+import 'package:ads/ads.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flame/flame.dart';
@@ -7,12 +8,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:json_store/json_store.dart';
 
+import 'main_nonprod.dart';
 import 'src/cubit/game_cubit.dart';
 import 'src/dao/game_dao.dart';
 import 'src/game/moonshot_game.dart';
+import 'src/services/flavor_config.dart';
 import 'src/ui/game_ui.dart';
 
 void main() async {
+  setupFlavor();
+
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.util.setOrientation(DeviceOrientation.portraitUp);
   await Flame.util.fullScreen();
@@ -33,11 +38,7 @@ void main() async {
         );
       }
       if (snapshot.connectionState == ConnectionState.done) {
-        return GameApp(
-          game: MoonshotGame(
-            GameCubit(GameDao(JsonStore()), FirebaseAnalytics())..initGame(),
-          ),
-        );
+        return GameApp();
       }
       return CircularProgressIndicator();
     },
@@ -45,9 +46,9 @@ void main() async {
 }
 
 class GameApp extends StatelessWidget {
-  final MoonshotGame game;
-
-  const GameApp({Key key, this.game}) : super(key: key);
+  final MoonshotGame game = MoonshotGame(
+    GameCubit(GameDao(JsonStore()), FirebaseAnalytics())..initGame(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +61,23 @@ class GameApp extends StatelessWidget {
       home: BlocProvider.value(
         value: game.gameCubit,
         child: Scaffold(
-          backgroundColor: Colors.orange,
-          body: Stack(
-            children: <Widget>[
-              Positioned.fill(child: game.widget),
-              Positioned.fill(child: GameUI()),
+          body: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(child: game.widget),
+                    Positioned.fill(child: GameUI()),
+                    if (FlavorConfig.instance.values.showAds)
+                      Positioned(
+                        child: Container(
+                          height: AdSize.banner.height.toDouble(),
+                          color: Colors.black,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

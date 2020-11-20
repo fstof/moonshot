@@ -43,8 +43,7 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
         } else if (!currentState.paused && state.paused) {
           pauseEngine();
         }
-        if (currentState.screen != state.screen &&
-            state.screen == Screen.Playing) {
+        if (currentState.screen != state.screen && state.screen == Screen.Playing) {
           currentState = state;
           start();
         }
@@ -96,8 +95,8 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
       directional: JoystickDirectional(),
       actions: [
         JoystickAction(
-          actionId: 1, // required
-          margin: const EdgeInsets.all(50), // optional
+          actionId: 1,
+          margin: const EdgeInsets.all(50),
         ),
       ],
     );

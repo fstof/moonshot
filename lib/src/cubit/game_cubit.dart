@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 import '../dao/game_dao.dart';
+import '../services/app_ads.dart';
 import '../ui/enums.dart';
 
 part 'game_state.dart';
@@ -44,6 +45,7 @@ class GameCubit extends Cubit<GameState> {
       screen: Screen.Playing,
       score: 0,
     ));
+    AppAds.showBanner();
   }
 
   Future<void> retryGame() async {
@@ -58,6 +60,8 @@ class GameCubit extends Cubit<GameState> {
   }
 
   Future<void> crash() async {
+    AppAds.hideBanner();
+
     firebaseAnalytics.logPostScore(score: loadedState.score);
 
     await _storage.saveHighscore(loadedState.highScore);

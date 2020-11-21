@@ -57,10 +57,11 @@ jobs:
           sudo snap install yq
           YAML_VERSION=$(yq r pubspec.yaml version)
           IFS='+' read -r VERSION BUILD <<< "$YAML_VERSION"
+          BUILD=$GITHUB_RUN_NUMBER
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> version.txt
-          echo "BUILD=$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
-          echo "BUILD=$GITHUB_RUN_NUMBER" >> version.txt
+          echo "BUILD=$BUILD" >> $GITHUB_ENV
+          echo "BUILD=$BUILD" >> version.txt
           echo "version: $VERSION, build: $BUILD"
 
       - name: Build the bundle

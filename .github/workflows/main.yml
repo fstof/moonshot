@@ -65,7 +65,10 @@ jobs:
           echo "version: $VERSION, build: $BUILD"
 
       - name: Build the bundle
-        run: flutter build appbundle --flavor prod -t lib/main_prod.dart --build-name=${VERSION} --build-number=${BUILD}
+        run: |
+          flutter build appbundle --flavor prod -t lib/main_prod.dart --build-name=${VERSION} --build-number=${BUILD}
+          mv ./build/app/outputs/bundle/prodRelease/app-prod-release.aab ./app-prod-release.aab
+          mv ./build/app/outputs/mapping/prod/release/mapping.txt ./mapping.txt
       
       - name: Generate apk
         run: |
@@ -81,21 +84,19 @@ jobs:
           name: version
           path: version.txt
 
-      - name: Upload Play Store artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: play-store-files
-          path: |
-            build/app/outputs/bundle/prodRelease/app-prod-release.aab
-            build/app/outputs/mapping/prod/release/mapping.txt
-
       - name: Upload itch.io artifacts
         uses: actions/upload-artifact@v1
         with:
           name: universal-apk
           path: "moonshot_${VERSION}(${BUILD}).apk"
 
-
+      - name: Upload Play Store artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: play-store-files
+          path: |
+            app-prod-release.aab
+            mapping.txt
 
   publish_itch:
     name: Publish apk to itch.io
@@ -155,5 +156,5 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: dev.stofberg.moonshot
           track: internal
-          releaseFiles: build/app/outputs/bundle/prodRelease/app-prod-release.aab
-          mappingFile: build/app/outputs/mapping/prod/release/mapping.txt
+          releaseFiles: app-prod-release.aab
+          mappingFile: mapping.txt

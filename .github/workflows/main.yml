@@ -52,8 +52,18 @@ jobs:
       - name: Fetch package dependencies
         run: flutter pub get
 
+      - name: Grab version numbers
+        run: |
+          YAML_VERSION=$(yq r pubspec.yaml version)
+          IFS='+' read -r VERSION BUILD <<< "$YAML_VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> version.txt
+          echo "BUILD=$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+          echo "BUILD=$GITHUB_RUN_NUMBER" >> version.txt
+          echo "version: $VERSION, build: $BUILD"
+
       - name: Build the bundle
-        run: flutter build appbundle --flavor prod -t lib/main_prod.dart --build-number=${GITHUB_RUN_NUMBER}
+        run: flutter build appbundle --flavor prod -t lib/main_prod.dart --build-name=${VERSION} --build-number=${BUILD}
       
       - name: Generate apk
         run: |
@@ -61,18 +71,87 @@ jobs:
           java -jar bundletool.jar build-apks --bundle=build/app/outputs/bundle/prodRelease/app-prod-release.aab --output=app-prod-release.apks --mode=universal
           mv app-prod-release.apks app-prod-release.zip
           unzip app-prod-release.zip
+          mv universal.apk "moonshot_${VERSION}(${BUILD}).apk"
 
-      - name: Upload artifacts
+      - name: Upload version file
         uses: actions/upload-artifact@v1
         with:
-          name: release-apk
-          path: universal.apk
+          name: version
+          path: version.txt
+
+      - name: Upload Play Store artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: play-store-files
+          path: |
+            build/app/outputs/bundle/prodRelease/app-prod-release.aab
+            build/app/outputs/mapping/prod/release/mapping.txt
+
+      - name: Upload itch.io artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: universal-apk
+          path: "moonshot_${VERSION}(${BUILD}).apk"
+
+
+
+  publish_itch:
+    name: Publish apk to itch.io
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download version file
+        uses: actions/download-artifact@v1
+        with:
+          name: version
+
+      - name: Load version number
+        run: |
+          source version.txt
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD=$BUILD" >> $GITHUB_ENV
+
+      - name: Download apk from build
+        uses: actions/download-artifact@v1
+        with:
+          name: universal-apk
+
+      - name: Publish to itch.io
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: android
+          ITCH_GAME: moonshot
+          ITCH_USER: fstof
+          PACKAGE: "moonshot_${VERSION}(${BUILD}).apk"
+          VERSION: "${VERSION}(${BUILD})"
+
+  publish_googlePlay:
+    name: Publish bundle to Google Play
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download version file
+        uses: actions/download-artifact@v1
+        with:
+          name: version
+
+      - name: Load version number
+        run: |
+          source version.txt
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD=$BUILD" >> $GITHUB_ENV
+
+      - name: Download Play Store artifacts from build
+        uses: actions/download-artifact@v1
+        with:
+          name: play-store-files
       
       - name: Publish to Google Play Console
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: dev.stofberg.moonshot
-          releaseFiles: build/app/outputs/bundle/prodRelease/app-prod-release.aab
           track: internal
+          releaseFiles: build/app/outputs/bundle/prodRelease/app-prod-release.aab
           mappingFile: build/app/outputs/mapping/prod/release/mapping.txt

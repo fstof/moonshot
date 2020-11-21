@@ -55,11 +55,18 @@ jobs:
       - name: Build the bundle
         run: flutter build appbundle --flavor prod -t lib/main_prod.dart --build-number=${GITHUB_RUN_NUMBER}
       
+      - name: Generate apk
+      - run: |
+          curl -L https://github.com/google/bundletool/releases/download/1.4.0/bundletool-all-1.4.0.jar --output bundletool.jar
+          java -jar bundletool.jar build-apks --bundle=build/app/outputs/bundle/prodRelease/app-prod-release.aab --output=app-prod-release.apks --mode=universal
+          mv app-prod-release.apks app-prod-release.zip
+          unzip app-prod-release.zip
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: release-aab
-          path: build/app/outputs/bundle/prodRelease/app-prod-release.aab
+          name: release-apk
+          path: universal.apk
       
       - name: Publish to Google Play Console
         uses: r0adkll/upload-google-play@v1

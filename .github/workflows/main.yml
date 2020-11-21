@@ -77,6 +77,7 @@ jobs:
           mv app-prod-release.apks app-prod-release.zip
           unzip app-prod-release.zip
           mv universal.apk "moonshot_${VERSION}(${BUILD}).apk"
+          ls -la
 
       - name: Upload version file
         uses: actions/upload-artifact@v1
@@ -88,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: universal-apk
-          path: "moonshot_${VERSION}(${BUILD}).apk"
+          path: moonshot_${VERSION}(${BUILD}).apk
 
       - name: Upload Play Store artifacts
         uses: actions/upload-artifact@v1

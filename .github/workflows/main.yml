@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: universal-apk
-          path: moonshot_${VERSION}(${BUILD}).apk
+          path: moonshot_${{ env.VERSION }}(${{ env.BUILD }}).apk
 
       - name: Upload Play Store artifacts
         uses: actions/upload-artifact@v1
@@ -127,8 +127,8 @@ jobs:
           CHANNEL: android
           ITCH_GAME: moonshot
           ITCH_USER: fstof
-          PACKAGE: "moonshot_${VERSION}(${BUILD}).apk"
-          VERSION: "${VERSION}(${BUILD})"
+          PACKAGE: "moonshot_${{ env.VERSION }}(${{ env.BUILD }}).apk"
+          VERSION: "${{ env.VERSION }}(${{ env.BUILD }})"
 
   publish_googlePlay:
     name: Publish bundle to Google Play

@@ -69,7 +69,7 @@ jobs:
       - name: Build adfree apk
         run: |
           flutter build apk --flavor prod -t lib/main_prod_adfree.dart --build-name=${VERSION} --build-number=${BUILD}
-          mv build/app/outputs/flutter-apk/app-prod-release.apk "moonshot_${VERSION}(${BUILD}).apk"
+          mv build/app/outputs/flutter-apk/app-prod-release.apk "moonshot_${BUILD}(${VERSION}).apk"
 
       - name: Upload version file
         uses: actions/upload-artifact@v2
@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: universal-apk
-          path: moonshot_${{ env.VERSION }}(${{ env.BUILD }}).apk
+          path: moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk
 
       - name: Upload Play Store artifacts
         uses: actions/upload-artifact@v2
@@ -119,8 +119,8 @@ jobs:
           CHANNEL: android
           ITCH_GAME: moonshot
           ITCH_USER: fstof
-          PACKAGE: "moonshot_${{ env.VERSION }}(${{ env.BUILD }}).apk"
-          VERSION: "${{ env.VERSION }}(${{ env.BUILD }})"
+          PACKAGE: "moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk"
+          VERSION: "${{ env.BUILD }}(${{ env.VERSION }})"
 
   publish_googlePlay:
     name: Publish bundle to Google Play
@@ -148,6 +148,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: dev.stofberg.moonshot
+          releaseName: "${{ env.BUILD }}(${{ env.VERSION }})"
           track: internal
           releaseFiles: app-prod-release.aab
           mappingFile: mapping.txt

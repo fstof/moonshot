@@ -73,7 +73,7 @@ jobs:
       - name: Generate apk
         run: |
           curl -L https://github.com/google/bundletool/releases/download/1.4.0/bundletool-all-1.4.0.jar --output bundletool.jar
-          java -jar bundletool.jar build-apks --bundle=app-prod-release.aab --output=app-prod-release.apks --mode=universal --ks=android/upload_key.jks --ks-pass=${{ secrets.KEYSTORE_PASS }} --ks-key-alias=key --key-pass=${{ secrets.KEY_PASS }}
+          java -jar bundletool.jar build-apks --bundle=app-prod-release.aab --output=app-prod-release.apks --mode=universal --ks=android/upload_key.jks --ks-pass=pass:${{ secrets.KEYSTORE_PASS }} --ks-key-alias=key --key-pass=pass:${{ secrets.KEY_PASS }}
           mv app-prod-release.apks app-prod-release.zip
           unzip app-prod-release.zip
           mv universal.apk "moonshot_${VERSION}(${BUILD}).apk"

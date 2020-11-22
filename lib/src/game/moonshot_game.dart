@@ -48,6 +48,9 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
           start();
         }
         currentState = state;
+        if (currentState.addEnemy) {
+          add(Enemy(this));
+        }
       } else {
         print('game not ready');
       }
@@ -62,14 +65,6 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
     add(gun = Gun(this));
     add(joystick = _createJoystick());
     joystick.addObserver(gun);
-
-    add(timer = TimerComponent(Timer(
-      2,
-      repeat: true,
-      callback: () {
-        add(Enemy(this));
-      },
-    )..start()));
   }
 
   void crash() {

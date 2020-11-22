@@ -7,8 +7,8 @@ void main() async {
     values: FlavorValues(
       showAds: true,
       testAds: false,
-      adAppId: 'ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx',
-      adBannerUnitId: 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx',
+      adAppId: '#{admobappid}#',
+      adBannerUnitId: '#{admobbannerid}#',
     ),
   );
   main_app.main();

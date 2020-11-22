@@ -38,16 +38,18 @@ jobs:
           UPLOAD_KEY_SECRET: ${{ secrets.UPLOAD_KEY_SECRET }}
       
       - name: Replace admob app id
-        uses: datamonsters/replace-action@v2
+        uses: cschleiden/replace-tokens@v1
         with:
-          files: "android/app/src/prod/res/values/strings.xml, lib/main_prod.dart"
-          replacements: 'ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx=${{ secrets.AD_MOB_APP_ID }}'
+          files: '["android/app/src/prod/res/values/strings.xml", "lib/main_prod.dart"]'
+        env:
+          admobappid: ${{ secrets.AD_MOB_APP_ID }}
       
       - name: Replace admob banner unit id
-        uses: datamonsters/replace-action@v2
+        uses: cschleiden/replace-tokens@v1
         with:
-          files: "lib/main_prod.dart"
-          replacements: 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx=${{ secrets.AD_MOB_BANNER_UNIT_ID }}'
+          files: '["lib/main_prod.dart"]'
+        env:
+          admobbannerid: ${{ secrets.AD_MOB_BANNER_UNIT_ID }}
 
       - name: print replacement
         run: |

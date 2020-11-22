@@ -16,7 +16,7 @@ import 'src/services/flavor_config.dart';
 import 'src/ui/game_ui.dart';
 
 void main() async {
-  setupFlavor();
+  setupNonprodFlavor();
 
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.util.setOrientation(DeviceOrientation.portraitUp);

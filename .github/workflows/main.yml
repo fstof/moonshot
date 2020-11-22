@@ -37,24 +37,13 @@ jobs:
         env:
           UPLOAD_KEY_SECRET: ${{ secrets.UPLOAD_KEY_SECRET }}
       
-      - name: Replace admob app id
+      - name: Replace admob tokens
         uses: cschleiden/replace-tokens@v1
         with:
-          files: '["android/app/src/prod/res/values/strings.xml", "lib/main_prod.dart"]'
+          files: '["android/app/src/prod/res/values/strings.xml", "lib/main_prod.dart", "lib/main_prod_adfree.dart"]'
         env:
           admobappid: ${{ secrets.AD_MOB_APP_ID }}
-      
-      - name: Replace admob banner unit id
-        uses: cschleiden/replace-tokens@v1
-        with:
-          files: '["lib/main_prod.dart"]'
-        env:
           admobbannerid: ${{ secrets.AD_MOB_BANNER_UNIT_ID }}
-
-      - name: print replacement
-        run: |
-          cat lib/main_prod.dart
-          cat android/app/src/prod/res/values/strings.xml
 
       - name: Get version numbers
         run: |
@@ -77,13 +66,10 @@ jobs:
           mv ./build/app/outputs/bundle/prodRelease/app-prod-release.aab ./app-prod-release.aab
           mv ./build/app/outputs/mapping/prod/release/mapping.txt ./mapping.txt
 
-      - name: Generate apk
+      - name: Build adfree apk
         run: |
-          curl -L https://github.com/google/bundletool/releases/download/1.4.0/bundletool-all-1.4.0.jar --output bundletool.jar
-          java -jar bundletool.jar build-apks --bundle=app-prod-release.aab --output=app-prod-release.apks --mode=universal --ks=android/upload_key.jks --ks-pass=pass:${{ secrets.KEYSTORE_PASS }} --ks-key-alias=key --key-pass=pass:${{ secrets.KEY_PASS }}
-          mv app-prod-release.apks app-prod-release.zip
-          unzip app-prod-release.zip
-          mv universal.apk "moonshot_${VERSION}(${BUILD}).apk"
+          flutter build apk --flavor prod -t lib/main_prod_adfree.dart --build-name=${VERSION} --build-number=${BUILD}
+          mv build/app/outputs/flutter-apk/app-prod-release.apk "moonshot_${VERSION}(${BUILD}).apk"
 
       - name: Upload version file
         uses: actions/upload-artifact@v2

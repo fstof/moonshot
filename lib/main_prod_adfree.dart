@@ -2,15 +2,15 @@ import 'main.dart' as main_app;
 import 'src/services/flavor_config.dart';
 
 void main() async {
-  setupProdFlavor();
+  setupProdAdfreeFlavor();
   main_app.main();
 }
 
-void setupProdFlavor() {
+void setupProdAdfreeFlavor() {
   FlavorConfig(
     flavor: Flavor.PROD,
     values: FlavorValues(
-      showAds: true,
+      showAds: false,
       testAds: false,
       adAppId: '#{admobappid}#',
       adBannerUnitId: '#{admobbannerid}#',

@@ -4,11 +4,11 @@ import 'main.dart' as main_app;
 import 'src/services/flavor_config.dart';
 
 void main() async {
-  setupFlavor();
+  setupNonprodFlavor();
   main_app.main();
 }
 
-void setupFlavor() {
+void setupNonprodFlavor() {
   FlavorConfig(
     flavor: Flavor.NONPROD,
     values: FlavorValues(

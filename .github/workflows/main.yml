@@ -49,6 +49,11 @@ jobs:
           files: "lib/main_prod.dart"
           replacements: 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx=${{ secrets.AD_MOB_BANNER_UNIT_ID }}'
 
+      - name: print replacement
+        run: |
+          cat lib/main_prod.dart
+          cat android/app/src/prod/res/values/strings.xml
+
       - name: Get version numbers
         run: |
           sudo snap install yq

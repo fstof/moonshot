@@ -40,8 +40,7 @@ class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     print('AppLifecycleState is now: $state');
 
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
       _gameBloc.pauseGameToggle(true);
     } else if (state == AppLifecycleState.resumed) {
       _gameBloc.pauseGameToggle(false);

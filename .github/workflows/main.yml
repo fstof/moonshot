@@ -49,10 +49,7 @@ jobs:
           files: "lib/main_prod.dart"
           replacements: 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx=${{ secrets.AD_MOB_BANNER_UNIT_ID }}'
 
-      - name: Fetch package dependencies
-        run: flutter pub get
-
-      - name: Grab version numbers
+      - name: Get version numbers
         run: |
           sudo snap install yq
           YAML_VERSION=$(yq r pubspec.yaml version)
@@ -64,12 +61,15 @@ jobs:
           echo "BUILD=$BUILD" >> version.txt
           echo "version: $VERSION, build: $BUILD"
 
+      - name: Fetch package dependencies
+        run: flutter pub get
+
       - name: Build the bundle
         run: |
           flutter build appbundle --flavor prod -t lib/main_prod.dart --build-name=${VERSION} --build-number=${BUILD}
           mv ./build/app/outputs/bundle/prodRelease/app-prod-release.aab ./app-prod-release.aab
           mv ./build/app/outputs/mapping/prod/release/mapping.txt ./mapping.txt
-      
+
       - name: Generate apk
         run: |
           curl -L https://github.com/google/bundletool/releases/download/1.4.0/bundletool-all-1.4.0.jar --output bundletool.jar
@@ -77,22 +77,21 @@ jobs:
           mv app-prod-release.apks app-prod-release.zip
           unzip app-prod-release.zip
           mv universal.apk "moonshot_${VERSION}(${BUILD}).apk"
-          ls -la
 
       - name: Upload version file
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: version
           path: version.txt
 
       - name: Upload itch.io artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: universal-apk
           path: moonshot_${{ env.VERSION }}(${{ env.BUILD }}).apk
 
       - name: Upload Play Store artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: play-store-files
           path: |
@@ -105,7 +104,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download version file
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2
         with:
           name: version
 
@@ -116,7 +115,7 @@ jobs:
           echo "BUILD=$BUILD" >> $GITHUB_ENV
 
       - name: Download apk from build
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2
         with:
           name: universal-apk
 
@@ -136,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download version file
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2
         with:
           name: version
 
@@ -147,7 +146,7 @@ jobs:
           echo "BUILD=$BUILD" >> $GITHUB_ENV
 
       - name: Download Play Store artifacts from build
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2
         with:
           name: play-store-files
       

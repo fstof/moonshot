@@ -48,7 +48,7 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
           start();
         }
         currentState = state;
-        if (currentState.addEnemy) {
+        if (currentState.addEnemy == true) {
           add(Enemy(this));
         }
       } else {

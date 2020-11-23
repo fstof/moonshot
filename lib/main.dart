@@ -65,6 +65,7 @@ class GameApp extends StatelessWidget {
             children: [
               Expanded(
                 child: Stack(
+                  alignment: Alignment.topCenter,
                   children: <Widget>[
                     Positioned.fill(child: game.widget),
                     Positioned.fill(child: GameUI()),

@@ -16,14 +16,9 @@ class PlayingScreen extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              if (FlavorConfig.instance.values.showAds)
-                Positioned(
-                  child: Container(
-                    height: AdSize.banner.height.toDouble(),
-                    color: Color(0xff000000),
+              'Score: ${state.score}'.text.xl.orange100.make().pOnly(
+                    top: FlavorConfig.instance.values.showAds ? AdSize.banner.height + 8.0 : 8.0,
                   ),
-                ),
-              'Score: ${state.score}'.text.xl.orange100.make(),
             ],
           );
         } else {

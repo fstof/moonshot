@@ -50,29 +50,26 @@ class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: BlocBuilder<GameCubit, GameState>(
-              cubit: _gameBloc,
-              builder: (context, state) {
-                if (state is GameLoading) {
-                  return const Offstage();
+      child: Center(
+        child: BlocBuilder<GameCubit, GameState>(
+            cubit: _gameBloc,
+            builder: (context, state) {
+              if (state is GameLoading) {
+                return const Offstage();
+              }
+              if (state is GameLoaded) {
+                if (state.screen == Screen.Home) {
+                  return HomeScreen();
                 }
-                if (state is GameLoaded) {
-                  if (state.screen == Screen.Home) {
-                    return HomeScreen();
-                  }
-                  if (state.screen == Screen.Playing) {
-                    return PlayingScreen();
-                  }
-                  if (state.screen == Screen.Crash) {
-                    return CrashScreen();
-                  }
+                if (state.screen == Screen.Playing) {
+                  return PlayingScreen();
                 }
-                return Offstage();
-              }),
-        ),
+                if (state.screen == Screen.Crash) {
+                  return CrashScreen();
+                }
+              }
+              return Offstage();
+            }),
       ),
     );
   }

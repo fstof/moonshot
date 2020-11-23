@@ -70,12 +70,10 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
   void crash() {
     components.forEach(markToRemove);
     gameCubit.crash();
-    Flame.audio.play('die.wav');
   }
 
   void score() {
     gameCubit.addScore();
-    Flame.audio.play('hit.wav');
   }
 
   @override

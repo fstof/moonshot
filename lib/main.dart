@@ -24,9 +24,11 @@ void main() async {
 
   await Flame.audio.loadAll([
     'die.wav',
+    'crash.wav',
     'hit.wav',
     'menu_tap.wav',
     'shoot.wav',
+    'playing.wav',
   ]);
 
   runApp(FutureBuilder(

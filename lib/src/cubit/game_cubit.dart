@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flame/flame.dart';
 
 import '../dao/game_dao.dart';
 import '../services/app_ads.dart';
@@ -21,6 +23,7 @@ class GameCubit extends Cubit<GameState> {
   final Random gameRandom = Random();
   Timer _gameTime;
   Stopwatch _enemyStopwatch;
+  AudioPlayer inGameMusic;
 
   final GameDao _storage;
   final FirebaseAnalytics firebaseAnalytics;
@@ -65,6 +68,11 @@ class GameCubit extends Cubit<GameState> {
     _startGameTimer();
     _enemyStopwatch = Stopwatch()..start();
     AppAds.showBanner();
+    if (inGameMusic == null) {
+      inGameMusic = await Flame.audio.loopLongAudio('playing.wav');
+    } else {
+      inGameMusic.resume();
+    }
   }
 
   void _startGameTimer() {
@@ -110,6 +118,10 @@ class GameCubit extends Cubit<GameState> {
     ));
     _stopGameTimer();
     _enemyStopwatch.stop();
+
+    inGameMusic.stop();
+    Flame.audio.play('crash.wav');
+    Flame.audio.play('die.wav');
   }
 
   Future<void> addScore() async {
@@ -123,6 +135,8 @@ class GameCubit extends Cubit<GameState> {
       score: newScore,
       highScore: highScore,
     ));
+
+    Flame.audio.play('hit.wav');
 
     if (_enemySpawnTime > kEnemyInitialSpawnTime * 0.5) {
       _enemySpawnTime -= _perScoreSubtractTime;

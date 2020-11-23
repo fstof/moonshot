@@ -1,3 +1,4 @@
+import 'package:ads/ads.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/spritesheet.dart';
 import 'package:flame/widgets/sprite_button.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../cubit/game_cubit.dart';
+import '../services/flavor_config.dart';
 
 class HomeScreen extends StatelessWidget {
   final _playSprite = SpriteSheet(
@@ -26,7 +28,9 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                'High Score: ${state.highScore}'.text.xl.orange100.make(),
+                'High Score: ${state.highScore}'.text.xl.orange100.make().pOnly(
+                      top: FlavorConfig.instance.values.showAds ? AdSize.banner.height + 8.0 : 8.0,
+                    ),
                 Expanded(child: const Offstage()),
                 FittedBox(child: 'MOONSHOT'.text.yellow500.xl6.make()),
                 Expanded(child: const Offstage()),

@@ -17,6 +17,13 @@ class HomeScreen extends StatelessWidget {
     columns: 2,
     rows: 1,
   );
+  final _audioSprite = SpriteSheet(
+    imageName: 'audio.png',
+    textureWidth: 32,
+    textureHeight: 32,
+    columns: 2,
+    rows: 2,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +35,14 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                'High Score: ${state.highScore}'.text.xl.orange100.make().pOnly(
-                      top: FlavorConfig.instance.values.showAds ? AdSize.banner.height + 8.0 : 8.0,
-                    ),
+                SizedBox(height: FlavorConfig.instance.values.showAds ? AdSize.banner.height.toDouble() : 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildMusicButton(BlocProvider.of(context)),
+                    SizedBox(width: 32),
+                  ],
+                ),
                 Expanded(child: const Offstage()),
                 FittedBox(
                   child: 'MOONSHOT'.text.yellow500.xl6.make().pSymmetric(h: 16),
@@ -38,6 +50,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(child: const Offstage()),
                 _buildStartButton(BlocProvider.of(context)),
                 Expanded(child: const Offstage()),
+                'High Score: ${state.highScore}'.text.xl.orange100.make().p16(),
               ],
             ),
           );
@@ -58,6 +71,34 @@ class HomeScreen extends StatelessWidget {
       onPressed: () {
         Flame.audio.play('menu_tap.wav');
         gameBloc.startGame();
+      },
+    );
+  }
+
+  Widget _buildSoundsButton(GameCubit gameBloc) {
+    return SpriteButton(
+      width: 32,
+      height: 32,
+      sprite: _audioSprite.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 0 : 1),
+      pressedSprite: _audioSprite.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 1 : 0),
+      label: null,
+      onPressed: () {
+        Flame.audio.play('menu_tap.wav');
+        gameBloc.toggleSounds();
+      },
+    );
+  }
+
+  Widget _buildMusicButton(GameCubit gameBloc) {
+    return SpriteButton(
+      width: 32,
+      height: 32,
+      sprite: _audioSprite.getSprite(0, (gameBloc.state as GameLoaded).music ? 0 : 1),
+      pressedSprite: _audioSprite.getSprite(0, (gameBloc.state as GameLoaded).music ? 1 : 0),
+      label: null,
+      onPressed: () {
+        Flame.audio.play('menu_tap.wav');
+        gameBloc.toggleMusic();
       },
     );
   }

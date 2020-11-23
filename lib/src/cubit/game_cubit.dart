@@ -68,10 +68,12 @@ class GameCubit extends Cubit<GameState> {
     _startGameTimer();
     _enemyStopwatch = Stopwatch()..start();
     AppAds.showBanner();
-    if (inGameMusic == null) {
-      inGameMusic = await Flame.audio.loopLongAudio('playing.wav');
-    } else {
-      inGameMusic.resume();
+    if (loadedState.music) {
+      if (inGameMusic == null) {
+        inGameMusic = await Flame.audio.loopLongAudio('playing.wav');
+      } else {
+        inGameMusic.resume();
+      }
     }
   }
 
@@ -154,5 +156,13 @@ class GameCubit extends Cubit<GameState> {
   Future<void> changeScreen(Screen screen) async {
     firebaseAnalytics.setCurrentScreen(screenName: screen.toString());
     emit(loadedState.copyWith(screen: screen));
+  }
+
+  Future<void> toggleSounds() async {
+    emit(loadedState.copyWith(sounds: !loadedState.sounds));
+  }
+
+  Future<void> toggleMusic() async {
+    emit(loadedState.copyWith(music: !loadedState.music));
   }
 }

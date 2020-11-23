@@ -16,6 +16,8 @@ class GameLoaded extends GameState {
   final bool paused;
   final bool addEnemy;
   final bool inGame;
+  final bool sounds;
+  final bool music;
 
   GameLoaded({
     this.score,
@@ -24,6 +26,8 @@ class GameLoaded extends GameState {
     this.paused,
     this.addEnemy,
     this.inGame,
+    this.sounds = true,
+    this.music = true,
   });
 
   GameLoaded copyWith({
@@ -33,6 +37,8 @@ class GameLoaded extends GameState {
     bool paused,
     bool addEnemy,
     bool inGame,
+    bool sounds,
+    bool music,
   }) =>
       GameLoaded(
         score: score ?? this.score,
@@ -41,6 +47,8 @@ class GameLoaded extends GameState {
         paused: paused ?? this.paused,
         addEnemy: addEnemy ?? this.addEnemy,
         inGame: inGame ?? this.inGame,
+        sounds: sounds ?? this.sounds,
+        music: music ?? this.music,
       );
 
   @override
@@ -51,5 +59,7 @@ class GameLoaded extends GameState {
         paused,
         addEnemy,
         inGame,
+        sounds,
+        music,
       ];
 }

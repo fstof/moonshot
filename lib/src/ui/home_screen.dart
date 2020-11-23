@@ -32,7 +32,9 @@ class HomeScreen extends StatelessWidget {
                       top: FlavorConfig.instance.values.showAds ? AdSize.banner.height + 8.0 : 8.0,
                     ),
                 Expanded(child: const Offstage()),
-                FittedBox(child: 'MOONSHOT'.text.yellow500.xl6.make()),
+                FittedBox(
+                  child: 'MOONSHOT'.text.yellow500.xl6.make().pSymmetric(h: 16),
+                ),
                 Expanded(child: const Offstage()),
                 _buildStartButton(BlocProvider.of(context)),
                 Expanded(child: const Offstage()),

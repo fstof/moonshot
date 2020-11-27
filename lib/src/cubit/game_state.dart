@@ -25,7 +25,7 @@ class GameLoaded extends GameState {
     this.screen,
     this.paused,
     this.addEnemy,
-    this.inGame,
+    this.inGame = false,
     this.sounds = true,
     this.music = true,
   });

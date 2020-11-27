@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:games_services/games_services.dart';
 
 import '../cubit/game_cubit.dart';
 import '../services/app_ads.dart';
@@ -23,6 +22,8 @@ class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    print('### signing into game services');
+    GamesServices.signIn().then((value) => print('### game sign in done')).catchError((error) => print('### error signing into game services $error'));
     _gameBloc = BlocProvider.of(context);
     WidgetsBinding.instance.addObserver(this);
     AppAds.init(_gameBloc);

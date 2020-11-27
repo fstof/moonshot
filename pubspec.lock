@@ -254,6 +254,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  games_services:
+    dependency: "direct main"
+    description:
+      name: games_services
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  games_services_platform_interface:
+    dependency: transitive
+    description:
+      name: games_services_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.9"
   google_fonts:
     dependency: "direct main"
     description:

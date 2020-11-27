@@ -2,8 +2,10 @@ import 'package:ads/ads.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/spritesheet.dart';
 import 'package:flame/widgets/sprite_button.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:games_services/games_services.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../cubit/game_cubit.dart';
@@ -39,6 +41,10 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    _buildLeaderboardButton(BlocProvider.of(context)),
+                    SizedBox(width: 32),
+                    _buildAchievementsButton(BlocProvider.of(context)),
+                    SizedBox(width: 32),
                     _buildMusicButton(BlocProvider.of(context)),
                     SizedBox(width: 32),
                   ],
@@ -84,6 +90,26 @@ class HomeScreen extends StatelessWidget {
       label: null,
       onPressed: () {
         Flame.audio.play('menu_tap.wav');
+        gameBloc.toggleSounds();
+      },
+    );
+  }
+
+  Widget _buildLeaderboardButton(GameCubit gameBloc) {
+    return TextButton(
+      child: const Text('L'),
+      onPressed: () {
+        GamesServices.showLeaderboards();
+        gameBloc.toggleSounds();
+      },
+    );
+  }
+
+  Widget _buildAchievementsButton(GameCubit gameBloc) {
+    return TextButton(
+      child: const Text('A'),
+      onPressed: () {
+        GamesServices.showAchievements();
         gameBloc.toggleSounds();
       },
     );

@@ -29,6 +29,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc:
+  games_services:
   google_fonts:
   json_store:
   velocity_x:

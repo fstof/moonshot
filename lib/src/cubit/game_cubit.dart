@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flame/flame.dart';
+import 'package:games_services/games_services.dart';
 
 import '../dao/game_dao.dart';
 import '../services/app_ads.dart';
@@ -47,14 +48,18 @@ class GameCubit extends Cubit<GameState> {
   }
 
   Future<void> pauseGameToggle(bool pause) async {
-    if (pause) {
-      _stopGameTimer();
-      _enemyStopwatch.stop();
-    } else if (loadedState.inGame) {
-      _startGameTimer();
-      _enemyStopwatch.start();
+    if (state is GameLoaded) {
+      if (pause) {
+        inGameMusic?.pause();
+        _stopGameTimer();
+        _enemyStopwatch?.stop();
+      } else if (loadedState.inGame) {
+        inGameMusic?.resume();
+        _startGameTimer();
+        _enemyStopwatch?.start();
+      }
+      emit(loadedState.copyWith(paused: pause));
     }
-    emit(loadedState.copyWith(paused: pause));
   }
 
   Future<void> startGame() async {
@@ -93,7 +98,7 @@ class GameCubit extends Cubit<GameState> {
   }
 
   void _stopGameTimer() {
-    _gameTime.cancel();
+    _gameTime?.cancel();
   }
 
   Future<void> retryGame() async {
@@ -113,6 +118,8 @@ class GameCubit extends Cubit<GameState> {
     firebaseAnalytics.logPostScore(score: loadedState.score);
 
     await _storage.saveHighscore(loadedState.highScore);
+
+    _unlockAchivements(loadedState);
 
     emit(loadedState.copyWith(
       screen: Screen.Crash,
@@ -164,5 +171,22 @@ class GameCubit extends Cubit<GameState> {
 
   Future<void> toggleMusic() async {
     emit(loadedState.copyWith(music: !loadedState.music));
+  }
+
+  void _unlockAchivements(GameLoaded loadedState) {
+    // submit high score
+    GamesServices.submitScore(
+      score: Score(
+        value: loadedState.highScore,
+        androidLeaderboardID: 'CgkI6cORwP8WEAIQAg',
+      ),
+    );
+    // incrementing achivements
+    GamesServices.increment(achievement: Achievement(androidID: 'CgkI6cORwP8WEAIQBA', steps: loadedState.score));
+
+    // unlocked achivements
+    if (loadedState.score > 10) {
+      GamesServices.unlock(achievement: Achievement(androidID: 'CgkI6cORwP8WEAIQAw', percentComplete: 100));
+    }
   }
 }

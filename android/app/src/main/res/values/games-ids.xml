@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
+<resources>
+  <!--app_id-->
+  <string name="app_id" translatable="false">790140051945</string>
+  <!--package_name-->
+  <string name="package_name" translatable="false">dev.stofberg.moonshot</string>
+  <!--achievement Get Those Rocks-->
+  <string name="achievement_get_those_rocks" translatable="false">CgkI6cORwP8WEAIQAw</string>
+  <!--achievement A Rocky Road-->
+  <string name="achievement_a_rocky_road" translatable="false">CgkI6cORwP8WEAIQBA</string>
+  <!--leaderboard High Score-->
+  <string name="leaderboard_high_score" translatable="false">CgkI6cORwP8WEAIQAg</string>
+</resources>

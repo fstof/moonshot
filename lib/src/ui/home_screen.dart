@@ -19,12 +19,12 @@ class HomeScreen extends StatelessWidget {
     columns: 2,
     rows: 1,
   );
-  final _audioSprite = SpriteSheet(
-    imageName: 'audio.png',
+  final _buttonSprites = SpriteSheet(
+    imageName: 'buttons.png',
     textureWidth: 32,
     textureHeight: 32,
     columns: 2,
-    rows: 2,
+    rows: 4,
   );
 
   @override
@@ -85,8 +85,8 @@ class HomeScreen extends StatelessWidget {
     return SpriteButton(
       width: 32,
       height: 32,
-      sprite: _audioSprite.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 0 : 1),
-      pressedSprite: _audioSprite.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 1 : 0),
+      sprite: _buttonSprites.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 0 : 1),
+      pressedSprite: _buttonSprites.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 1 : 0),
       label: null,
       onPressed: () {
         Flame.audio.play('menu_tap.wav');
@@ -95,22 +95,30 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLeaderboardButton(GameCubit gameBloc) {
-    return TextButton(
-      child: const Text('L'),
-      onPressed: () {
-        GamesServices.showLeaderboards();
-        gameBloc.toggleSounds();
+  Widget _buildAchievementsButton(GameCubit gameBloc) {
+    return SpriteButton(
+      width: 32,
+      height: 32,
+      sprite: _buttonSprites.getSprite(2, 0),
+      pressedSprite: _buttonSprites.getSprite(2, 0),
+      label: null,
+      onPressed: () async {
+        Flame.audio.play('menu_tap.wav');
+        GamesServices.showAchievements();
       },
     );
   }
 
-  Widget _buildAchievementsButton(GameCubit gameBloc) {
-    return TextButton(
-      child: const Text('A'),
-      onPressed: () {
-        GamesServices.showAchievements();
-        gameBloc.toggleSounds();
+  Widget _buildLeaderboardButton(GameCubit gameBloc) {
+    return SpriteButton(
+      width: 32,
+      height: 32,
+      sprite: _buttonSprites.getSprite(3, 0),
+      pressedSprite: _buttonSprites.getSprite(3, 0),
+      label: null,
+      onPressed: () async {
+        Flame.audio.play('menu_tap.wav');
+        GamesServices.showLeaderboards();
       },
     );
   }
@@ -119,8 +127,8 @@ class HomeScreen extends StatelessWidget {
     return SpriteButton(
       width: 32,
       height: 32,
-      sprite: _audioSprite.getSprite(0, (gameBloc.state as GameLoaded).music ? 0 : 1),
-      pressedSprite: _audioSprite.getSprite(0, (gameBloc.state as GameLoaded).music ? 1 : 0),
+      sprite: _buttonSprites.getSprite(0, (gameBloc.state as GameLoaded).music ? 0 : 1),
+      pressedSprite: _buttonSprites.getSprite(0, (gameBloc.state as GameLoaded).music ? 1 : 0),
       label: null,
       onPressed: () {
         Flame.audio.play('menu_tap.wav');

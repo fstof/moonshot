@@ -66,10 +66,10 @@ jobs:
           mv ./build/app/outputs/bundle/prodRelease/app-prod-release.aab ./app-prod-release.aab
           mv ./build/app/outputs/mapping/prod/release/mapping.txt ./mapping.txt
 
-      - name: Build adfree apk
-        run: |
-          flutter build apk --flavor prod -t lib/main_prod_adfree.dart --build-name=${VERSION} --build-number=${BUILD}
-          mv build/app/outputs/flutter-apk/app-prod-release.apk "moonshot_${BUILD}(${VERSION}).apk"
+      # - name: Build adfree apk
+      #   run: |
+      #     flutter build apk --flavor prod -t lib/main_prod_adfree.dart --build-name=${VERSION} --build-number=${BUILD}
+      #     mv build/app/outputs/flutter-apk/app-prod-release.apk "moonshot_${BUILD}(${VERSION}).apk"
 
       - name: Upload version file
         uses: actions/upload-artifact@v2
@@ -77,11 +77,11 @@ jobs:
           name: version
           path: version.txt
 
-      - name: Upload itch.io artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: universal-apk
-          path: moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk
+      # - name: Upload itch.io artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: universal-apk
+      #     path: moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk
 
       - name: Upload Play Store artifacts
         uses: actions/upload-artifact@v2
@@ -91,36 +91,36 @@ jobs:
             app-prod-release.aab
             mapping.txt
 
-  publish_itch:
-    name: Publish apk to itch.io
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download version file
-        uses: actions/download-artifact@v2
-        with:
-          name: version
+  # publish_itch:
+  #   name: Publish apk to itch.io
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download version file
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: version
 
-      - name: Load version number
-        run: |
-          source version.txt
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "BUILD=$BUILD" >> $GITHUB_ENV
+  #     - name: Load version number
+  #       run: |
+  #         source version.txt
+  #         echo "VERSION=$VERSION" >> $GITHUB_ENV
+  #         echo "BUILD=$BUILD" >> $GITHUB_ENV
 
-      - name: Download apk from build
-        uses: actions/download-artifact@v2
-        with:
-          name: universal-apk
+  #     - name: Download apk from build
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: universal-apk
 
-      - name: Publish to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
-          CHANNEL: android
-          ITCH_GAME: moonshot
-          ITCH_USER: fstof
-          PACKAGE: "moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk"
-          VERSION: "${{ env.BUILD }}(${{ env.VERSION }})"
+  #     - name: Publish to itch.io
+  #       uses: josephbmanley/butler-publish-itchio-action@master
+  #       env:
+  #         BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+  #         CHANNEL: android
+  #         ITCH_GAME: moonshot
+  #         ITCH_USER: fstof
+  #         PACKAGE: "moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk"
+  #         VERSION: "${{ env.BUILD }}(${{ env.VERSION }})"
 
   publish_googlePlay:
     name: Publish bundle to Google Play

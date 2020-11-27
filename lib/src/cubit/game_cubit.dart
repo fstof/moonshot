@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:Moonshot/src/utils/game_ids.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -178,15 +179,15 @@ class GameCubit extends Cubit<GameState> {
     GamesServices.submitScore(
       score: Score(
         value: loadedState.highScore,
-        androidLeaderboardID: 'CgkI6cORwP8WEAIQAg',
+        androidLeaderboardID: leaderboard_high_score,
       ),
-    );
+    ).then((value) => print('score submitted: $value')).catchError((error) => print('error submitting score: $error'));
     // incrementing achivements
-    GamesServices.increment(achievement: Achievement(androidID: 'CgkI6cORwP8WEAIQBA', steps: loadedState.score));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_a_rocky_road, steps: loadedState.score));
 
     // unlocked achivements
-    if (loadedState.score > 10) {
-      GamesServices.unlock(achievement: Achievement(androidID: 'CgkI6cORwP8WEAIQAw', percentComplete: 100));
+    if (loadedState.score >= 10) {
+      GamesServices.unlock(achievement: Achievement(androidID: achievement_get_those_rocks, percentComplete: 100));
     }
   }
 }

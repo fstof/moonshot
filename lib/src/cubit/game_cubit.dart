@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:Moonshot/src/utils/game_ids.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -12,6 +11,7 @@ import 'package:games_services/games_services.dart';
 import '../dao/game_dao.dart';
 import '../services/app_ads.dart';
 import '../ui/enums.dart';
+import '../utils/game_ids.dart';
 
 part 'game_state.dart';
 
@@ -181,13 +181,31 @@ class GameCubit extends Cubit<GameState> {
         value: loadedState.highScore,
         androidLeaderboardID: leaderboard_high_score,
       ),
-    ).then((value) => print('score submitted: $value')).catchError((error) => print('error submitting score: $error'));
+    );
     // incrementing achivements
     GamesServices.increment(achievement: Achievement(androidID: achievement_a_rocky_road, steps: loadedState.score));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_getting_there, steps: loadedState.score));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_now_were_playing, steps: loadedState.score));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_up_up, steps: loadedState.score));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_and_away, steps: loadedState.score));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_to_the_moon, steps: loadedState.score));
 
     // unlocked achivements
+
+    if (loadedState.score == 0) {
+      GamesServices.unlock(achievement: Achievement(androidID: achievement_how_does_this_game_work, percentComplete: 100));
+    }
     if (loadedState.score >= 10) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_get_those_rocks, percentComplete: 100));
+    }
+    if (loadedState.score >= 30) {
+      GamesServices.unlock(achievement: Achievement(androidID: achievement_keep_it_up, percentComplete: 100));
+    }
+    if (loadedState.score >= 50) {
+      GamesServices.unlock(achievement: Achievement(androidID: achievement_getting_better, percentComplete: 100));
+    }
+    if (loadedState.score >= 100) {
+      GamesServices.unlock(achievement: Achievement(androidID: achievement_getting_serious, percentComplete: 100));
     }
   }
 }

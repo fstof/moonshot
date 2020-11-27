@@ -7,8 +7,26 @@
   <string name="package_name" translatable="false">dev.stofberg.moonshot</string>
   <!--achievement Get Those Rocks-->
   <string name="achievement_get_those_rocks" translatable="false">CgkI6cORwP8WEAIQAw</string>
+  <!--achievement Keep It Up-->
+  <string name="achievement_keep_it_up" translatable="false">CgkI6cORwP8WEAIQDA</string>
+  <!--achievement Getting Better-->
+  <string name="achievement_getting_better" translatable="false">CgkI6cORwP8WEAIQDQ</string>
+  <!--achievement Getting Serious-->
+  <string name="achievement_getting_serious" translatable="false">CgkI6cORwP8WEAIQDg</string>
   <!--achievement A Rocky Road-->
   <string name="achievement_a_rocky_road" translatable="false">CgkI6cORwP8WEAIQBA</string>
+  <!--achievement Getting There-->
+  <string name="achievement_getting_there" translatable="false">CgkI6cORwP8WEAIQBw</string>
+  <!--achievement Now We're Playing-->
+  <string name="achievement_now_were_playing" translatable="false">CgkI6cORwP8WEAIQCA</string>
+  <!--achievement Up Up...-->
+  <string name="achievement_up_up..." translatable="false">CgkI6cORwP8WEAIQCQ</string>
+  <!--achievement ...And Away!-->
+  <string name="achievement_...and_away" translatable="false">CgkI6cORwP8WEAIQCg</string>
+  <!--achievement To The Moon-->
+  <string name="achievement_to_the_moon" translatable="false">CgkI6cORwP8WEAIQCw</string>
+  <!--achievement How Does This Game Work?-->
+  <string name="achievement_how_does_this_game_work" translatable="false">CgkI6cORwP8WEAIQDw</string>
   <!--leaderboard High Score-->
   <string name="leaderboard_high_score" translatable="false">CgkI6cORwP8WEAIQAg</string>
 </resources>

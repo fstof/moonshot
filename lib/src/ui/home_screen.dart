@@ -12,19 +12,12 @@ import '../cubit/game_cubit.dart';
 import '../services/flavor_config.dart';
 
 class HomeScreen extends StatelessWidget {
-  final _playSprite = SpriteSheet(
-    imageName: 'play.png',
-    textureWidth: 32,
-    textureHeight: 32,
-    columns: 2,
-    rows: 1,
-  );
   final _buttonSprites = SpriteSheet(
     imageName: 'buttons.png',
     textureWidth: 32,
     textureHeight: 32,
     columns: 2,
-    rows: 4,
+    rows: 5,
   );
 
   @override
@@ -71,8 +64,8 @@ class HomeScreen extends StatelessWidget {
     return SpriteButton(
       width: 128,
       height: 128,
-      sprite: _playSprite.getSprite(0, 0),
-      pressedSprite: _playSprite.getSprite(0, 1),
+      sprite: _buttonSprites.getSprite(4, 0),
+      pressedSprite: _buttonSprites.getSprite(4, 1),
       label: null,
       onPressed: () {
         Flame.audio.play('menu_tap.wav');

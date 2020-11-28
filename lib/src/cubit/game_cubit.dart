@@ -120,7 +120,7 @@ class GameCubit extends Cubit<GameState> {
 
     await _storage.saveHighscore(loadedState.highScore);
 
-    _unlockAchivements(loadedState);
+    _unlockDieAchievements(loadedState);
 
     emit(loadedState.copyWith(
       screen: Screen.Crash,
@@ -140,6 +140,7 @@ class GameCubit extends Cubit<GameState> {
     if (newScore > highScore) {
       highScore = newScore;
     }
+    _unlockScoreAchievements(loadedState);
 
     emit(loadedState.copyWith(
       score: newScore,
@@ -174,7 +175,7 @@ class GameCubit extends Cubit<GameState> {
     emit(loadedState.copyWith(music: !loadedState.music));
   }
 
-  void _unlockAchivements(GameLoaded loadedState) {
+  void _unlockDieAchievements(GameLoaded loadedState) {
     // submit high score
     GamesServices.submitScore(
       score: Score(
@@ -182,29 +183,34 @@ class GameCubit extends Cubit<GameState> {
         androidLeaderboardID: leaderboard_high_score,
       ),
     );
-    // incrementing achivements
-    GamesServices.increment(achievement: Achievement(androidID: achievement_a_rocky_road, steps: loadedState.score));
-    GamesServices.increment(achievement: Achievement(androidID: achievement_getting_there, steps: loadedState.score));
-    GamesServices.increment(achievement: Achievement(androidID: achievement_now_were_playing, steps: loadedState.score));
-    GamesServices.increment(achievement: Achievement(androidID: achievement_up_up, steps: loadedState.score));
-    GamesServices.increment(achievement: Achievement(androidID: achievement_and_away, steps: loadedState.score));
-    GamesServices.increment(achievement: Achievement(androidID: achievement_to_the_moon, steps: loadedState.score));
 
-    // unlocked achivements
+    GamesServices.increment(achievement: Achievement(androidID: achievement_dont_give_up, steps: 1));
 
     if (loadedState.score == 0) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_how_does_this_game_work, percentComplete: 100));
     }
-    if (loadedState.score >= 10) {
+  }
+
+  void _unlockScoreAchievements(GameLoaded loadedState) {
+    // incrementing achivements
+    GamesServices.increment(achievement: Achievement(androidID: achievement_a_rocky_road, steps: 1));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_getting_there, steps: 1));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_now_were_playing, steps: 1));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_up_up, steps: 1));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_and_away, steps: 1));
+    GamesServices.increment(achievement: Achievement(androidID: achievement_to_the_moon, steps: 1));
+
+    // unlocked achivements
+    if (loadedState.score >= target_achievement_get_those_rocks) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_get_those_rocks, percentComplete: 100));
     }
-    if (loadedState.score >= 30) {
+    if (loadedState.score >= target_achievement_keep_it_up) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_keep_it_up, percentComplete: 100));
     }
-    if (loadedState.score >= 50) {
+    if (loadedState.score >= target_achievement_getting_better) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_getting_better, percentComplete: 100));
     }
-    if (loadedState.score >= 100) {
+    if (loadedState.score >= target_achievement_getting_serious) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_getting_serious, percentComplete: 100));
     }
   }

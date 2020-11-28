@@ -27,6 +27,8 @@
   <string name="achievement_to_the_moon" translatable="false">CgkI6cORwP8WEAIQCw</string>
   <!--achievement How Does This Game Work?-->
   <string name="achievement_how_does_this_game_work" translatable="false">CgkI6cORwP8WEAIQDw</string>
+  <!--achievement Don't Give Up-->
+  <string name="achievement_dont_give_up" translatable="false">CgkI6cORwP8WEAIQEA</string>
   <!--leaderboard High Score-->
   <string name="leaderboard_high_score" translatable="false">CgkI6cORwP8WEAIQAg</string>
 </resources>

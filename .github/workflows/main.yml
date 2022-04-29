@@ -142,7 +142,7 @@ jobs:
           name: play-store-files
       
       - name: Publish to Google Play Console
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@v1.0.16
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: dev.stofberg.moonshot

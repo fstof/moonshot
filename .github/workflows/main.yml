@@ -46,7 +46,7 @@ jobs:
       - name: Get version numbers
         run: |
           sudo snap install yq
-          YAML_VERSION=$(yq r pubspec.yaml version)
+          YAML_VERSION=$(yq .version < pubspec.yaml)
           IFS='+' read -r VERSION BUILD <<< "$YAML_VERSION"
           BUILD=$GITHUB_RUN_NUMBER
           echo "VERSION=$VERSION" >> $GITHUB_ENV

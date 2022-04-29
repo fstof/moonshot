@@ -8,27 +8,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  debug:
-    name: Debug
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Set up secret file
-      env:
-        GOOGLE_SERVICES_SECRET: ${{ secrets.GOOGLE_SERVICES_SECRET }}
-        UPLOAD_KEY_SECRET: ${{ secrets.UPLOAD_KEY_SECRET }}
-      run: |
-        echo $GOOGLE_SERVICES_SECRET >> debug.txt
-        echo $UPLOAD_KEY_SECRET >> debug.txt
-    - name: Upload debug file
-      uses: actions/upload-artifact@v2
-      with:
-        name: debug
-        path: debug.txt
-
   build:
     name: Build the production artifact
     runs-on: ubuntu-latest
@@ -83,7 +62,7 @@ jobs:
         run: |
           flutter build appbundle --flavor prod -t lib/main_prod.dart --build-name=${VERSION} --build-number=${BUILD}
           mv ./build/app/outputs/bundle/prodRelease/app-prod-release.aab ./app-prod-release.aab
-          mv ./build/app/outputs/mapping/prod/release/mapping.txt ./mapping.txt
+          mv ./build/app/outputs/mapping/prodRelease/mapping.txt ./mapping.txt
 
       # - name: Build adfree apk
       #   run: |

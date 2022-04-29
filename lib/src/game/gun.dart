@@ -1,40 +1,33 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flame/anchor.dart';
-import 'package:flame/animation.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/joystick/joystick_component.dart';
-import 'package:flame/components/joystick/joystick_events.dart';
+import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 import 'bullet.dart';
-import 'moonshot_game.dart';
 
-class Gun extends PositionComponent with JoystickListener {
-  final MoonshotGame _game;
+class Gun extends PositionComponent with HasGameRef {
+  final JoystickComponent? joystick;
 
-  Animation animation;
+  late SpriteAnimation animation;
   bool firing = false;
 
-  Gun(this._game) {
+  Gun(this.joystick) {
     anchor = Anchor.center;
     width = 128;
     height = 128;
-
-    animation = Animation.sequenced(
-      'gun.png',
-      4,
-      textureWidth: 64,
-      textureHeight: 64,
-      loop: false,
-      stepTime: 0.05,
+  }
+  @override
+  Future<void>? onLoad() async {
+    animation = SpriteAnimation.fromFrameData(
+      await Flame.images.load('gun.png'),
+      SpriteAnimationData.sequenced(amount: 4, textureSize: Vector2.all(64), stepTime: 0.05, loop: false),
     );
-    animation.onCompleteAnimation = () {
+    animation.onComplete = () {
       if (animation.done()) {
-        _game.add(
+        gameRef.add(
           Bullet(
-            _game,
             angle - 1.5,
             x + 64 * cos(angle - 1.5),
             y + 64 * sin(angle - 1.5),
@@ -42,62 +35,70 @@ class Gun extends PositionComponent with JoystickListener {
         );
       }
     };
+    return super.onLoad();
   }
 
   @override
-  void resize(Size size) {
-    x = (size.width) / 2;
-    y = (size.height) / 2;
+  void onGameResize(Vector2 size) {
+    x = (size.x) / 2;
+    y = (size.y) / 2;
+    super.onGameResize(size);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+    if (joystick!.direction != JoystickDirection.idle) {
+      angle = joystick!.delta.screenAngle();
+    }
     if (firing) {
       animation.update(dt);
 
       if (animation.done()) {
         firing = false;
-        animation.currentIndex = 0;
+        animation.reset();
       }
     }
   }
 
   @override
   void render(Canvas canvas) {
-    prepareCanvas(canvas);
+    // prepareCanvas(canvas);
     animation.getSprite().render(
           canvas,
-          width: width,
-          height: height,
+          size: Vector2(width, height),
           // overridePaint: overridePaint,
         );
   }
 
-  @override
-  void joystickAction(JoystickActionEvent event) {
-    if (event.event == ActionEvent.DOWN) {
-      firing = true;
-      Flame.audio.play('shoot.wav');
-    }
+  void shoot() {
+    firing = true;
+    FlameAudio.play('shoot.wav');
   }
+  // @override
+  // void joystickAction(JoystickActionEvent event) {
+  //   if (event.event == ActionEvent.DOWN) {
+  //     firing = true;
+  //     FlameAudio.play('shoot.wav');
+  //   }
+  // }
 
-  @override
-  void joystickChangeDirectional(JoystickDirectionalEvent event) {
-    if (event.directional != JoystickMoveDirectional.IDLE) {
-      angle = event.radAngle + 1.5;
-    }
-    // switch (event.directional) {
-    //   case JoystickMoveDirectional.MOVE_LEFT:
-    //   case JoystickMoveDirectional.MOVE_UP_LEFT:
-    //   case JoystickMoveDirectional.MOVE_DOWN_LEFT:
-    //     angle -= event.intensity * 0.1;
-    //     break;
-    //   case JoystickMoveDirectional.MOVE_RIGHT:
-    //   case JoystickMoveDirectional.MOVE_UP_RIGHT:
-    //   case JoystickMoveDirectional.MOVE_DOWN_RIGHT:
-    //     angle += event.intensity * 0.1;
-    //     break;
-    // }
-  }
+  // @override
+  // void joystickChangeDirectional(JoystickDirectionalEvent event) {
+  //   if (event.directional != JoystickMoveDirectional.IDLE) {
+  //     angle = event.radAngle + 1.5;
+  //   }
+  //   // switch (event.directional) {
+  //   //   case JoystickMoveDirectional.MOVE_LEFT:
+  //   //   case JoystickMoveDirectional.MOVE_UP_LEFT:
+  //   //   case JoystickMoveDirectional.MOVE_DOWN_LEFT:
+  //   //     angle -= event.intensity * 0.1;
+  //   //     break;
+  //   //   case JoystickMoveDirectional.MOVE_RIGHT:
+  //   //   case JoystickMoveDirectional.MOVE_UP_RIGHT:
+  //   //   case JoystickMoveDirectional.MOVE_DOWN_RIGHT:
+  //   //     angle += event.intensity * 0.1;
+  //   //     break;
+  //   // }
+  // }
 }

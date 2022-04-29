@@ -5,11 +5,13 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/sprite.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:games_services/games_services.dart';
 
 import '../dao/game_dao.dart';
-import '../services/app_ads.dart';
 import '../ui/enums.dart';
 import '../utils/game_ids.dart';
 
@@ -23,9 +25,9 @@ const kPerScoreSubtractInitialTime = 10;
 
 class GameCubit extends Cubit<GameState> {
   final Random gameRandom = Random();
-  Timer _gameTime;
-  Stopwatch _enemyStopwatch;
-  AudioPlayer inGameMusic;
+  Timer? _gameTime;
+  Stopwatch? _enemyStopwatch;
+  AudioPlayer? inGameMusic;
 
   final GameDao _storage;
   final FirebaseAnalytics firebaseAnalytics;
@@ -38,6 +40,12 @@ class GameCubit extends Cubit<GameState> {
   GameLoaded get loadedState => state as GameLoaded;
 
   Future<void> initGame() async {
+    try {
+      await GamesServices.signIn();
+      print('##### GameService signed in');
+    } catch (e) {
+      print('##### Error signing in to GaneServices: $e');
+    }
     final highscore = await _storage.loadHighscore() ?? 0;
 
     emit(GameLoaded(
@@ -45,6 +53,10 @@ class GameCubit extends Cubit<GameState> {
       score: 0,
       screen: Screen.Home,
       paused: false,
+      buttonSprites: SpriteSheet(
+        image: await Flame.images.load('buttons.png'),
+        srcSize: Vector2.all(32),
+      ),
     ));
   }
 
@@ -73,12 +85,11 @@ class GameCubit extends Cubit<GameState> {
     ));
     _startGameTimer();
     _enemyStopwatch = Stopwatch()..start();
-    AppAds.showBanner();
     if (loadedState.music) {
       if (inGameMusic == null) {
-        inGameMusic = await Flame.audio.loopLongAudio('playing.wav');
+        inGameMusic = await FlameAudio.loopLongAudio('playing.wav');
       } else {
-        inGameMusic.resume();
+        inGameMusic!.resume();
       }
     }
   }
@@ -88,10 +99,10 @@ class GameCubit extends Cubit<GameState> {
       const Duration(milliseconds: 100),
       (timer) {
         if (!(state as GameLoaded).paused) {
-          if (_enemyStopwatch.elapsed > Duration(milliseconds: _enemySpawnTime)) {
+          if (_enemyStopwatch!.elapsed > Duration(milliseconds: _enemySpawnTime)) {
             emit(loadedState.copyWith(addEnemy: true));
             emit(loadedState.copyWith(addEnemy: false));
-            _enemyStopwatch.reset();
+            _enemyStopwatch!.reset();
           }
         }
       },
@@ -114,11 +125,9 @@ class GameCubit extends Cubit<GameState> {
   }
 
   Future<void> crash() async {
-    AppAds.hideBanner();
+    firebaseAnalytics.logPostScore(score: loadedState.score!);
 
-    firebaseAnalytics.logPostScore(score: loadedState.score);
-
-    await _storage.saveHighscore(loadedState.highScore);
+    await _storage.saveHighscore(loadedState.highScore!);
 
     _unlockDieAchievements(loadedState);
 
@@ -127,16 +136,16 @@ class GameCubit extends Cubit<GameState> {
       inGame: false,
     ));
     _stopGameTimer();
-    _enemyStopwatch.stop();
+    _enemyStopwatch!.stop();
 
-    inGameMusic.stop();
-    Flame.audio.play('crash.wav');
-    Flame.audio.play('die.wav');
+    inGameMusic!.stop();
+    FlameAudio.play('crash.wav');
+    FlameAudio.play('die.wav');
   }
 
   Future<void> addScore() async {
-    int highScore = loadedState.highScore;
-    int newScore = loadedState.score + 1;
+    int highScore = loadedState.highScore!;
+    int newScore = loadedState.score! + 1;
     if (newScore > highScore) {
       highScore = newScore;
     }
@@ -147,7 +156,7 @@ class GameCubit extends Cubit<GameState> {
       highScore: highScore,
     ));
 
-    Flame.audio.play('hit.wav');
+    FlameAudio.play('hit.wav');
 
     if (_enemySpawnTime > kEnemyInitialSpawnTime * 0.5) {
       _enemySpawnTime -= _perScoreSubtractTime;
@@ -201,16 +210,16 @@ class GameCubit extends Cubit<GameState> {
     GamesServices.increment(achievement: Achievement(androidID: achievement_to_the_moon, steps: 1));
 
     // unlocked achivements
-    if (loadedState.score >= target_achievement_get_those_rocks) {
+    if (loadedState.score! >= target_achievement_get_those_rocks) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_get_those_rocks, percentComplete: 100));
     }
-    if (loadedState.score >= target_achievement_keep_it_up) {
+    if (loadedState.score! >= target_achievement_keep_it_up) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_keep_it_up, percentComplete: 100));
     }
-    if (loadedState.score >= target_achievement_getting_better) {
+    if (loadedState.score! >= target_achievement_getting_better) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_getting_better, percentComplete: 100));
     }
-    if (loadedState.score >= target_achievement_getting_serious) {
+    if (loadedState.score! >= target_achievement_getting_serious) {
       GamesServices.unlock(achievement: Achievement(androidID: achievement_getting_serious, percentComplete: 100));
     }
   }

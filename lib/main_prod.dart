@@ -10,9 +10,7 @@ void setupProdFlavor() {
   FlavorConfig(
     flavor: Flavor.PROD,
     values: FlavorValues(
-      showAds: true,
       testAds: false,
-      adAppId: '#{admobappid}#',
       adBannerUnitId: '#{admobbannerid}#',
     ),
   );

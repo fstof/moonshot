@@ -5,10 +5,10 @@ class GameDao {
 
   GameDao(this._storage);
 
-  Future<int> loadHighscore() async {
+  Future<int?> loadHighscore() async {
     final raw = await _storage.getItem('highscore');
     if (raw != null) {
-      return raw['highscore'] as int;
+      return raw['highscore'] as int?;
     }
     return null;
   }

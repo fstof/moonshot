@@ -1,22 +1,24 @@
-import 'dart:ui';
-
-import 'package:flame/anchor.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/mixins/resizable.dart';
-import 'package:flame/sprite.dart';
+import 'package:flame/components.dart';
 
 import 'utils.dart';
 
-class Star extends SpriteComponent with Resizable {
-  int speed;
+class Star extends SpriteComponent with HasGameRef {
+  late int speed;
 
-  Star() : super.fromSprite(32, 32, Sprite('star.png')) {
+  Star() {
     anchor = Anchor.center;
     speed = rnd.nextInt(100) + 50;
   }
 
+  @override
+  Future<void>? onLoad() async {
+    sprite = await Sprite.load('star.png');
+    size = Vector2.all(32);
+    return super.onLoad();
+  }
+
   void reset() {
-    x = rnd.nextInt(size.width.floor()).toDouble();
+    x = rnd.nextInt(gameRef.size.x.floor()).toDouble();
     y = 0;
 
     speed = rnd.nextInt(100) + 50;
@@ -24,11 +26,10 @@ class Star extends SpriteComponent with Resizable {
   }
 
   @override
-  void resize(Size size) {
-    super.resize(size);
-
-    x = rnd.nextInt(size.width.floor()).toDouble();
-    y = rnd.nextInt(size.height.floor()).toDouble();
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    x = rnd.nextInt(size.x.floor()).toDouble();
+    y = rnd.nextInt(size.y.floor()).toDouble();
   }
 
   @override
@@ -38,10 +39,10 @@ class Star extends SpriteComponent with Resizable {
     y += speed * dt;
 
     if (size != null) {
-      if (x > size.width || x < 0) {
+      if (x > gameRef.size.x || x < 0) {
         reset();
       }
-      if (y > size.height || y < 0) {
+      if (y > gameRef.size.y || y < 0) {
         reset();
       }
     }

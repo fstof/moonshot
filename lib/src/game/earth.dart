@@ -1,24 +1,37 @@
 import 'dart:ui';
 
-import 'package:flame/anchor.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/mixins/resizable.dart';
-import 'package:flame/sprite.dart';
+import 'package:flame/components.dart';
 
 import 'utils.dart';
 
-class Earth extends SpriteComponent with Resizable {
-  Earth() : super.fromSprite(128.0, 32.0, Sprite('earth.png')) {
-    anchor = Anchor.bottomCenter;
+class Earth extends SpriteComponent with HasGameRef {
+  Earth() {
+    anchor = Anchor.center;
   }
 
   @override
-  void resize(Size size) {
-    super.resize(size);
-    x = (size.width) / 2;
-    y = (size.height);
-    width = size.width;
-    height = 100;
+  Future<void>? onLoad() async {
+    sprite = await Sprite.load('earth.png');
+    size = Vector2(gameRef.size.x, 100);
+    position = Vector2(gameRef.size.x / 2, gameRef.size.y - height / 2);
+
+    return super.onLoad();
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    if (DEBUG_COLLISION) {
+      final box = collisionBox;
+      final paint = Paint()..color = Color(0xffffff00);
+      canvas.restore();
+      canvas.drawRect(Rect.fromLTWH(box.x, box.y, box.width, box.height), paint);
+    }
   }
 
   CollisionBox get collisionBox => CollisionBox(

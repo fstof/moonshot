@@ -6,9 +6,9 @@ class GameButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const GameButton({
-    Key key,
-    this.text,
-    this.onPressed,
+    Key? key,
+    required this.text,
+    required this.onPressed,
   }) : super(key: key);
 
   @override

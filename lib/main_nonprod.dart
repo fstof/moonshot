@@ -1,5 +1,3 @@
-import 'package:ads/ads.dart';
-
 import 'main.dart' as main_app;
 import 'src/services/flavor_config.dart';
 
@@ -12,10 +10,8 @@ void setupNonprodFlavor() {
   FlavorConfig(
     flavor: Flavor.NONPROD,
     values: FlavorValues(
-      showAds: true,
       testAds: true,
-      adAppId: FirebaseAdMob.testAppId,
-      adBannerUnitId: BannerAd.testAdUnitId,
+      adBannerUnitId: 'ca-app-pub-3940256099942544/6300978111', // test adID
     ),
   );
 }

@@ -1,9 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:games_services/games_services.dart';
 
 import '../cubit/game_cubit.dart';
-import '../services/app_ads.dart';
 import 'crash_screen.dart';
 import 'enums.dart';
 import 'home_screen.dart';
@@ -17,23 +15,19 @@ class GameUI extends StatefulWidget {
 }
 
 class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
-  GameCubit _gameBloc;
+  late GameCubit _gameBloc;
 
   @override
   void initState() {
     super.initState();
-    print('### signing into game services');
-    GamesServices.signIn().then((value) => print('### game sign in done')).catchError((error) => print('### error signing into game services $error'));
     _gameBloc = BlocProvider.of(context);
-    WidgetsBinding.instance.addObserver(this);
-    AppAds.init(_gameBloc);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
-    AppAds.dispose();
+    WidgetsBinding.instance!.removeObserver(this);
   }
 
   @override
@@ -53,14 +47,14 @@ class _GameUIState extends State<GameUI> with WidgetsBindingObserver {
     return SafeArea(
       child: Center(
         child: BlocBuilder<GameCubit, GameState>(
-            cubit: _gameBloc,
+            bloc: _gameBloc,
             builder: (context, state) {
               if (state is GameLoading) {
                 return const Offstage();
               }
               if (state is GameLoaded) {
                 if (state.screen == Screen.Home) {
-                  return HomeScreen();
+                  return HomeScreen(buttonSprites: state.buttonSprites);
                 }
                 if (state.screen == Screen.Playing) {
                   return PlayingScreen();

@@ -10,35 +10,38 @@ class GameLoading extends GameState {
 }
 
 class GameLoaded extends GameState {
-  final int score;
-  final int highScore;
+  final int? score;
+  final int? highScore;
   final Screen screen;
   final bool paused;
-  final bool addEnemy;
+  final bool? addEnemy;
   final bool inGame;
   final bool sounds;
   final bool music;
+  final SpriteSheet? buttonSprites;
 
   GameLoaded({
     this.score,
     this.highScore,
-    this.screen,
-    this.paused,
+    required this.screen,
+    required this.paused,
     this.addEnemy,
     this.inGame = false,
     this.sounds = true,
     this.music = true,
+    this.buttonSprites,
   });
 
   GameLoaded copyWith({
-    int score,
-    int highScore,
-    Screen screen,
-    bool paused,
-    bool addEnemy,
-    bool inGame,
-    bool sounds,
-    bool music,
+    int? score,
+    int? highScore,
+    Screen? screen,
+    bool? paused,
+    bool? addEnemy,
+    bool? inGame,
+    bool? sounds,
+    bool? music,
+    SpriteSheet? buttonSprites,
   }) =>
       GameLoaded(
         score: score ?? this.score,
@@ -49,10 +52,11 @@ class GameLoaded extends GameState {
         inGame: inGame ?? this.inGame,
         sounds: sounds ?? this.sounds,
         music: music ?? this.music,
+        buttonSprites: buttonSprites ?? this.buttonSprites,
       );
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         score,
         highScore,
         screen,
@@ -61,5 +65,6 @@ class GameLoaded extends GameState {
         inGame,
         sounds,
         music,
+        buttonSprites,
       ];
 }

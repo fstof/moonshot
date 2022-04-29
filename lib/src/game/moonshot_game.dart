@@ -1,11 +1,7 @@
-import 'package:flame/components/joystick/joystick_action.dart';
-import 'package:flame/components/joystick/joystick_component.dart';
-import 'package:flame/components/joystick/joystick_directional.dart';
-import 'package:flame/components/timer_component.dart';
-import 'package:flame/flame.dart';
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/gestures.dart';
-import 'package:flame/time.dart';
+import 'package:flame/input.dart';
+import 'package:flame/palette.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 
@@ -17,39 +13,46 @@ import 'enemy.dart';
 import 'gun.dart';
 import 'moon.dart';
 
-class MoonshotGame extends BaseGame with MultiTouchDragDetector {
-  Gun gun;
-  Moon moon;
-  Earth earth;
-  JoystickComponent joystick;
-  TimerComponent timer;
+class MoonshotGame extends FlameGame with HasDraggables, HasTappables {
+  late Gun gun;
+  Background? background;
+  late Moon moon;
+  late Earth earth;
+  JoystickComponent? joystick;
+  late HudButtonComponent actionButton;
+  TimerComponent? timer;
   final GameCubit gameCubit;
-  GameLoaded currentState;
+  GameLoaded? currentState;
 
   MoonshotGame(this.gameCubit) : super() {
     _initGame();
   }
 
+  @override
+  Future<void>? onLoad() {
+    return super.onLoad();
+  }
+
   void _initGame() {
-    gameCubit.listen((state) {
+    gameCubit.stream.listen((state) {
       print('state newScreen: ${(state as GameLoaded)?.screen}');
 
       if (state is GameLoaded) {
         if (currentState == null) {
           currentState = state;
         }
-        if (currentState.paused && !state.paused) {
+        if (currentState!.paused && !state.paused) {
           resumeEngine();
-        } else if (!currentState.paused && state.paused) {
+        } else if (!currentState!.paused && state.paused) {
           pauseEngine();
         }
-        if (currentState.screen != state.screen && state.screen == Screen.Playing) {
+        if (currentState!.screen != state.screen && state.screen == Screen.Playing) {
           currentState = state;
           start();
         }
         currentState = state;
-        if (currentState.addEnemy == true) {
-          add(Enemy(this));
+        if (currentState!.addEnemy == true) {
+          add(Enemy());
         }
       } else {
         print('game not ready');
@@ -59,16 +62,20 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
 
   void start() {
     print('starting game by adding the components');
-    add(Background(this));
+    add(background = Background());
     add(moon = Moon());
     add(earth = Earth());
-    add(gun = Gun(this));
     add(joystick = _createJoystick());
-    joystick.addObserver(gun);
+    add(actionButton = _createActionButton());
+    add(gun = Gun(joystick));
+
+    actionButton.onPressed = () {
+      gun.shoot();
+    };
   }
 
   void crash() {
-    components.forEach(markToRemove);
+    children.forEach(remove);
     gameCubit.crash();
   }
 
@@ -76,22 +83,25 @@ class MoonshotGame extends BaseGame with MultiTouchDragDetector {
     gameCubit.addScore();
   }
 
-  @override
-  void onReceiveDrag(DragEvent drag) {
-    joystick?.onReceiveDrag(drag);
-    super.onReceiveDrag(drag);
+  JoystickComponent _createJoystick() {
+    final knobPaint = BasicPalette.white.withAlpha(100).paint();
+    final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
+    return JoystickComponent(
+      priority: 0,
+      size: 50,
+      knob: CircleComponent(radius: 30, paint: knobPaint),
+      background: CircleComponent(radius: 50, paint: backgroundPaint),
+      margin: const EdgeInsets.only(left: 40, bottom: 40),
+    );
   }
 
-  JoystickComponent _createJoystick() {
-    return JoystickComponent(
-      componentPriority: 0,
-      directional: JoystickDirectional(),
-      actions: [
-        JoystickAction(
-          actionId: 1,
-          margin: const EdgeInsets.all(50),
-        ),
-      ],
+  HudButtonComponent _createActionButton() {
+    final buttonPaint = BasicPalette.white.withAlpha(100).paint();
+    return HudButtonComponent(
+      priority: 1,
+      size: Vector2.all(100),
+      margin: const EdgeInsets.only(right: 10, bottom: 10),
+      button: CircleComponent(radius: 50, paint: buttonPaint),
     );
   }
 }

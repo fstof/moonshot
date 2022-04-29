@@ -1,65 +1,72 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flame/anchor.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/mixins/resizable.dart';
-import 'package:flame/spritesheet.dart';
+import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
+import 'package:flame/sprite.dart';
 
 import 'moonshot_game.dart';
 import 'utils.dart';
 
-class Enemy extends SpriteComponent with Resizable {
+class Enemy extends SpriteComponent with HasGameRef<MoonshotGame> {
   static const speed = 300;
-  static final sheet = SpriteSheet(
-    imageName: 'astroids.png',
-    textureWidth: 32,
-    textureHeight: 32,
-    columns: 3,
-    rows: 1,
-  );
-  final MoonshotGame _game;
 
-  double targetX;
-  double targetAngle;
-  bool direction;
-  int rotationSpeed;
-  int movementSpeed;
-  final List<Enemy> children = [];
+  late double targetX;
+  double? targetAngle;
+  late bool direction;
+  late int rotationSpeed;
+  late int movementSpeed;
   final bool isChild;
-  final bool haveChildren;
+  final bool canHaveChildren;
 
-  Enemy(
-    this._game, {
-    this.haveChildren = true,
-    double size = 64,
-    double speed,
+  Enemy({
+    this.canHaveChildren = true,
+    double sizex = 64,
+    double? speed,
     this.isChild = false,
-  }) : super.fromSprite(size, size, sheet.getSprite(0, rnd.nextInt(3))) {
+  }) {
     anchor = Anchor.center;
     direction = rnd.nextBool();
     rotationSpeed = rnd.nextInt(10);
     movementSpeed = speed?.floor() ?? rnd.nextInt(100) + 100;
+    size = Vector2.all(sizex);
+  }
+  @override
+  Future<void>? onLoad() async {
+    final sheet = SpriteSheet(
+      image: await Flame.images.load('astroids.png'),
+      srcSize: Vector2.all(32),
+    );
+    sprite = sheet.getSprite(0, rnd.nextInt(3));
+
+    if (!isChild) {
+      y = 0;
+      x = rnd.nextInt(gameRef.size.x.floor()).toDouble();
+    }
+    targetX = rnd.nextInt(gameRef.size.x.floor()).toDouble();
+    final netX = (x - targetX);
+    final netY = gameRef.size.y;
+    targetAngle = atan(netX / netY);
+
+    return super.onLoad();
   }
 
   void shot() {
-    if (haveChildren && rnd.nextBool() && y < size.height / 2) {
-      _game.add(
+    if (canHaveChildren && rnd.nextBool() && y < gameRef.size.y / 2) {
+      gameRef.add(
         Enemy(
-          _game,
-          haveChildren: false,
-          size: width / 2,
+          canHaveChildren: false,
+          sizex: width / 2,
           speed: movementSpeed * 0.5,
           isChild: true,
         )
           ..x = x + 10
           ..y = y,
       );
-      _game.add(
+      gameRef.add(
         Enemy(
-          _game,
-          haveChildren: false,
-          size: width / 2,
+          canHaveChildren: false,
+          sizex: width / 2,
           speed: movementSpeed * 0.5,
           isChild: true,
         )
@@ -70,43 +77,31 @@ class Enemy extends SpriteComponent with Resizable {
   }
 
   @override
-  resize(Size size) {
-    super.resize(size);
-    if (!isChild) {
-      y = 0;
-      x = rnd.nextInt(size.width.floor()).toDouble();
-    }
-    targetX = rnd.nextInt(size.width.floor()).toDouble();
-    final netX = (x - targetX);
-    final netY = size.height;
-    targetAngle = atan(netX / netY);
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
     if (targetAngle == null) return;
-    x += sin(targetAngle) * movementSpeed * dt;
-    y += cos(targetAngle) * movementSpeed * dt;
+    x += sin(targetAngle!) * movementSpeed * dt;
+    y += cos(targetAngle!) * movementSpeed * dt;
     angle = angle + (direction ? rotationSpeed : -rotationSpeed) * dt;
 
-    if (x > size.width) {
+    if (x > gameRef.size.x) {
       x = 0;
     }
     if (x < 0) {
-      x = size.width;
+      x = gameRef.size.x;
     }
-    if (y > size.height || y < 0) {
-      _game.markToRemove(this);
+    if (y > gameRef.size.y || y < 0) {
+      gameRef.remove(this);
     }
 
-    if (checkForCollision(collisionBox, _game.moon.collisionBox)) {
-      _game.markToRemove(this);
-      _game.crash();
-    }
-    if (checkForCollision(collisionBox, _game.earth.collisionBox)) {
-      _game.markToRemove(this);
-      _game.crash();
+    if (checkForCollision(collisionBox, gameRef.moon.collisionBox) || checkForCollision(collisionBox, gameRef.earth.collisionBox)) {
+      gameRef.remove(this);
+      gameRef.crash();
     }
   }
 
@@ -117,8 +112,7 @@ class Enemy extends SpriteComponent with Resizable {
       final box = collisionBox;
       final paint = Paint()..color = Color(0xffffff00);
       canvas.restore();
-      canvas.drawRect(
-          Rect.fromLTWH(box.x, box.y, box.width, box.height), paint);
+      canvas.drawRect(Rect.fromLTWH(box.x, box.y, box.width, box.height), paint);
     }
   }
 

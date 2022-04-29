@@ -1,7 +1,6 @@
-import 'package:ads/ads.dart';
-import 'package:flame/flame.dart';
-import 'package:flame/spritesheet.dart';
-import 'package:flame/widgets/sprite_button.dart';
+import 'package:Moonshot/src/utils/game_ids.dart';
+import 'package:flame/widgets.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,36 +8,29 @@ import 'package:games_services/games_services.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../cubit/game_cubit.dart';
-import '../services/flavor_config.dart';
 
 class HomeScreen extends StatelessWidget {
-  final _buttonSprites = SpriteSheet(
-    imageName: 'buttons.png',
-    textureWidth: 32,
-    textureHeight: 32,
-    columns: 2,
-    rows: 5,
-  );
+  final buttonSprites;
+
+  const HomeScreen({Key? key, required this.buttonSprites}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
-      cubit: BlocProvider.of(context),
       builder: (context, state) {
         if (state is GameLoaded) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: FlavorConfig.instance.values.showAds ? AdSize.banner.height.toDouble() : 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _buildLeaderboardButton(BlocProvider.of(context)),
+                    _buildLeaderboardButton(context.read()),
                     SizedBox(width: 32),
-                    _buildAchievementsButton(BlocProvider.of(context)),
+                    _buildAchievementsButton(context.read()),
                     SizedBox(width: 32),
-                    _buildMusicButton(BlocProvider.of(context)),
+                    _buildMusicButton(context.read(), state),
                     SizedBox(width: 32),
                   ],
                 ),
@@ -47,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   child: 'MOONSHOT'.text.yellow500.xl6.make().pSymmetric(h: 16),
                 ),
                 Expanded(child: const Offstage()),
-                _buildStartButton(BlocProvider.of(context)),
+                _buildStartButton(context.read()),
                 Expanded(child: const Offstage()),
                 'High Score: ${state.highScore}'.text.xl.orange100.make().p16(),
               ],
@@ -60,73 +52,82 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStartButton(GameCubit gameBloc) {
+  Widget _buildStartButton(GameCubit cubit) {
     return SpriteButton(
       width: 128,
       height: 128,
-      sprite: _buttonSprites.getSprite(4, 0),
-      pressedSprite: _buttonSprites.getSprite(4, 1),
-      label: null,
+      sprite: buttonSprites.getSprite(4, 0),
+      pressedSprite: buttonSprites.getSprite(4, 1),
+      label: Offstage(),
       onPressed: () {
-        Flame.audio.play('menu_tap.wav');
-        gameBloc.startGame();
+        FlameAudio.play('menu_tap.wav');
+        cubit.startGame();
       },
     );
   }
 
-  Widget _buildSoundsButton(GameCubit gameBloc) {
+  Widget _buildAchievementsButton(GameCubit cubit) {
     return SpriteButton(
       width: 32,
       height: 32,
-      sprite: _buttonSprites.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 0 : 1),
-      pressedSprite: _buttonSprites.getSprite(1, (gameBloc.state as GameLoaded).sounds ? 1 : 0),
-      label: null,
-      onPressed: () {
-        Flame.audio.play('menu_tap.wav');
-        gameBloc.toggleSounds();
-      },
-    );
-  }
-
-  Widget _buildAchievementsButton(GameCubit gameBloc) {
-    return SpriteButton(
-      width: 32,
-      height: 32,
-      sprite: _buttonSprites.getSprite(2, 0),
-      pressedSprite: _buttonSprites.getSprite(2, 0),
-      label: null,
+      sprite: buttonSprites.getSprite(2, 0),
+      pressedSprite: buttonSprites.getSprite(2, 0),
+      label: Offstage(),
       onPressed: () async {
-        Flame.audio.play('menu_tap.wav');
+        FlameAudio.play('menu_tap.wav');
         GamesServices.showAchievements();
       },
     );
   }
 
-  Widget _buildLeaderboardButton(GameCubit gameBloc) {
+  Widget _buildLeaderboardButton(GameCubit cubit) {
     return SpriteButton(
       width: 32,
       height: 32,
-      sprite: _buttonSprites.getSprite(3, 0),
-      pressedSprite: _buttonSprites.getSprite(3, 0),
-      label: null,
+      sprite: buttonSprites.getSprite(3, 0),
+      pressedSprite: buttonSprites.getSprite(3, 0),
+      label: Offstage(),
       onPressed: () async {
-        Flame.audio.play('menu_tap.wav');
-        GamesServices.showLeaderboards();
+        FlameAudio.play('menu_tap.wav');
+        GamesServices.showLeaderboards(
+          androidLeaderboardID: leaderboard_high_score,
+        );
       },
     );
   }
 
-  Widget _buildMusicButton(GameCubit gameBloc) {
+  Widget _buildSoundsButton(GameCubit cubit, GameLoaded state) {
+    print('sound is ${(cubit.state as GameLoaded).sounds}');
     return SpriteButton(
       width: 32,
       height: 32,
-      sprite: _buttonSprites.getSprite(0, (gameBloc.state as GameLoaded).music ? 0 : 1),
-      pressedSprite: _buttonSprites.getSprite(0, (gameBloc.state as GameLoaded).music ? 1 : 0),
-      label: null,
+      sprite: buttonSprites.getSprite(0, state.sounds ? 0 : 1),
+      pressedSprite: buttonSprites.getSprite(0, state.sounds ? 1 : 0),
+      label: '${state.sounds ? 'On' : 'Off'}'.text.white.make(),
       onPressed: () {
-        Flame.audio.play('menu_tap.wav');
-        gameBloc.toggleMusic();
+        FlameAudio.play('menu_tap.wav');
+        cubit.toggleSounds();
       },
+    );
+  }
+
+  Widget _buildMusicButton(GameCubit cubit, GameLoaded state) {
+    print('music is ${(cubit.state as GameLoaded).music}');
+    return Column(
+      children: [
+        SpriteButton(
+          width: 32,
+          height: 32,
+          sprite: buttonSprites.getSprite(1, state.music ? 0 : 1),
+          pressedSprite: buttonSprites.getSprite(1, state.music ? 0 : 1),
+          label: Offstage(),
+          onPressed: () {
+            FlameAudio.play('menu_tap.wav');
+            cubit.toggleMusic();
+          },
+        ),
+        '${state.music ? 'On' : 'Off'}'.text.white.make()
+      ],
     );
   }
 }

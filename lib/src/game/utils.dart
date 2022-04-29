@@ -8,10 +8,10 @@ class CollisionBox {
   final double width;
   final double height;
   const CollisionBox({
-    this.x,
-    this.y,
-    this.width,
-    this.height,
+    required this.x,
+    required this.y,
+    required this.width,
+    required this.height,
   });
 }
 
@@ -28,8 +28,5 @@ bool _boxCompare(CollisionBox box1, CollisionBox box2) {
   final double obstacleX = box2.x;
   final double obstacleY = box2.y;
 
-  return box1.x < obstacleX + box2.width &&
-      box1.x + box1.width > obstacleX &&
-      box1.y < box2.y + box2.height &&
-      box1.height + box1.y > obstacleY;
+  return box1.x < obstacleX + box2.width && box1.x + box1.width > obstacleX && box1.y < box2.y + box2.height && box1.height + box1.y > obstacleY;
 }

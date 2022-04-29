@@ -1,4 +1,5 @@
 import 'package:flame/flame.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -25,15 +26,14 @@ class CrashScreen extends StatelessWidget {
                     GameButton(
                       text: 'HOME',
                       onPressed: () {
-                        Flame.audio.play('menu_tap.wav');
-                        BlocProvider.of<GameCubit>(context)
-                            .changeScreen(Screen.Home);
+                        FlameAudio.play('menu_tap.wav');
+                        BlocProvider.of<GameCubit>(context).changeScreen(Screen.Home);
                       },
                     ),
                     GameButton(
                       text: 'RETRY',
                       onPressed: () {
-                        Flame.audio.play('menu_tap.wav');
+                        FlameAudio.play('menu_tap.wav');
                         BlocProvider.of<GameCubit>(context).retryGame();
                       },
                     ),

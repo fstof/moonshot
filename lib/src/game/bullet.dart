@@ -1,26 +1,27 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flame/anchor.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/mixins/resizable.dart';
-import 'package:flame/sprite.dart';
+import 'package:flame/components.dart';
 
 import 'enemy.dart';
 import 'moonshot_game.dart';
 import 'utils.dart';
 
-class Bullet extends SpriteComponent with Resizable {
-  final MoonshotGame _game;
+class Bullet extends SpriteComponent with HasGameRef<MoonshotGame> {
   final double targetAngle;
   bool used = false;
 
-  Bullet(this._game, this.targetAngle, double initialX, double initialY)
-      : super.fromSprite(6, 12, Sprite('bullet.png')) {
+  Bullet(this.targetAngle, double initialX, double initialY) {
     anchor = Anchor.center;
-    // angle = targetAngle;
     x = initialX;
     y = initialY;
+  }
+
+  @override
+  Future<void>? onLoad() async {
+    sprite = await Sprite.load('bullet.png');
+    size = Vector2(6, 12);
+    return super.onLoad();
   }
 
   @override
@@ -30,23 +31,23 @@ class Bullet extends SpriteComponent with Resizable {
     x += 5 * cos(targetAngle - 0);
     y += 5 * sin(targetAngle - 0);
     if (size != null) {
-      if (y > size.height || y < 0 || x > size.width || x < 0) {
-        _game.markToRemove(this);
+      if (y > gameRef.size.y || y < 0 || x > gameRef.size.x || x < 0) {
+        gameRef.remove(this);
       }
     }
 
-    if (checkForCollision(collisionBox, _game.earth.collisionBox)) {
-      _game.markToRemove(this);
+    if (checkForCollision(collisionBox, gameRef.earth.collisionBox)) {
+      gameRef.remove(this);
     }
-    _game.components.forEach((component) {
+    gameRef.children.forEach((component) {
       if (component is Enemy) {
         if (checkForCollision(collisionBox, component.collisionBox)) {
           if (!used) {
             used = true;
             component.shot();
-            _game.score();
-            _game.markToRemove(component);
-            _game.markToRemove(this);
+            gameRef.score();
+            gameRef.remove(component);
+            gameRef.remove(this);
           }
         }
       }
@@ -60,8 +61,7 @@ class Bullet extends SpriteComponent with Resizable {
       final box = collisionBox;
       final paint = Paint()..color = Color(0xffffff00);
       canvas.restore();
-      canvas.drawRect(
-          Rect.fromLTWH(box.x, box.y, box.width, box.height), paint);
+      canvas.drawRect(Rect.fromLTWH(box.x, box.y, box.width, box.height), paint);
     }
   }
 

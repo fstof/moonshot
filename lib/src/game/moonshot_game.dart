@@ -35,27 +35,23 @@ class MoonshotGame extends FlameGame with HasDraggables, HasTappables {
 
   void _initGame() {
     gameCubit.stream.listen((state) {
-      print('state newScreen: ${(state as GameLoaded)?.screen}');
+      print('state newScreen: ${(state as GameLoaded).screen}');
 
-      if (state is GameLoaded) {
-        if (currentState == null) {
-          currentState = state;
-        }
-        if (currentState!.paused && !state.paused) {
-          resumeEngine();
-        } else if (!currentState!.paused && state.paused) {
-          pauseEngine();
-        }
-        if (currentState!.screen != state.screen && state.screen == Screen.Playing) {
-          currentState = state;
-          start();
-        }
+      if (currentState == null) {
         currentState = state;
-        if (currentState!.addEnemy == true) {
-          add(Enemy());
-        }
-      } else {
-        print('game not ready');
+      }
+      if (currentState!.paused && !state.paused) {
+        resumeEngine();
+      } else if (!currentState!.paused && state.paused) {
+        pauseEngine();
+      }
+      if (currentState!.screen != state.screen && state.screen == Screen.Playing) {
+        currentState = state;
+        start();
+      }
+      currentState = state;
+      if (currentState!.addEnemy == true) {
+        add(Enemy());
       }
     });
   }

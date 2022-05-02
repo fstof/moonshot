@@ -6,10 +6,8 @@ enum Flavor { NONPROD, PROD }
 
 class FlavorValues {
   FlavorValues({
-    required this.testAds,
     required this.adBannerUnitId,
   });
-  final bool testAds;
   final String adBannerUnitId;
 }
 

@@ -8,6 +8,10 @@ class AppAds {
   static late BannerAd myBanner;
 
   static void init() {
+    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
+      maxAdContentRating: MaxAdContentRating.g,
+    ));
+
     myBanner = BannerAd(
       adUnitId: _bannerUnitId,
       size: AdSize.banner,

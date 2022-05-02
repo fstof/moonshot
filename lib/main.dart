@@ -41,9 +41,7 @@ void main() async {
     future: Firebase.initializeApp(),
     builder: (context, snapshot) {
       if (snapshot.hasError) {
-        return CircularProgressIndicator(
-          backgroundColor: Colors.red,
-        );
+        return CircularProgressIndicator(backgroundColor: Colors.red);
       }
       if (snapshot.connectionState == ConnectionState.done) {
         return GameApp();

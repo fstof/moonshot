@@ -10,7 +10,6 @@ void setupNonprodFlavor() {
   FlavorConfig(
     flavor: Flavor.NONPROD,
     values: FlavorValues(
-      testAds: true,
       adBannerUnitId: 'ca-app-pub-3940256099942544/6300978111', // test adID
     ),
   );

@@ -3,14 +3,16 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/sprite.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 import 'bullet.dart';
 
-class Gun extends PositionComponent with HasGameRef {
+class Gun extends PositionComponent with HasGameReference {
   final JoystickComponent? joystick;
 
   late SpriteAnimation animation;
+  late SpriteAnimationTicker ticker;
   bool firing = false;
 
   Gun(this.joystick) {
@@ -24,9 +26,10 @@ class Gun extends PositionComponent with HasGameRef {
       await Flame.images.load('gun.png'),
       SpriteAnimationData.sequenced(amount: 4, textureSize: Vector2.all(64), stepTime: 0.05, loop: false),
     );
-    animation.onComplete = () {
-      if (animation.done()) {
-        gameRef.add(
+    ticker = animation.createTicker();
+    ticker.onComplete = () {
+      if (ticker.done()) {
+        game.add(
           Bullet(
             angle - 1.5,
             x + 64 * cos(angle - 1.5),
@@ -52,11 +55,11 @@ class Gun extends PositionComponent with HasGameRef {
       angle = joystick!.delta.screenAngle();
     }
     if (firing) {
-      animation.update(dt);
+      ticker.update(dt);
 
-      if (animation.done()) {
+      if (ticker.done()) {
         firing = false;
-        animation.reset();
+        ticker.reset();
       }
     }
   }
@@ -64,7 +67,8 @@ class Gun extends PositionComponent with HasGameRef {
   @override
   void render(Canvas canvas) {
     // prepareCanvas(canvas);
-    animation.getSprite().render(
+
+    ticker.getSprite().render(
           canvas,
           size: Vector2(width, height),
           // overridePaint: overridePaint,

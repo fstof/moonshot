@@ -13,17 +13,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Java environment
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 12.x
+          java-version: '17'
+          distribution: 'zulu'
 
       - name: Setup Flutter environment
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+      - run: flutter --version
 
       - name: Decrypt google services 
         run: ./.github/scripts/decrypt-google-services.sh
@@ -70,19 +72,19 @@ jobs:
       #     mv build/app/outputs/flutter-apk/app-prod-release.apk "moonshot_${BUILD}(${VERSION}).apk"
 
       - name: Upload version file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: version
           path: version.txt
 
       # - name: Upload itch.io artifacts
-      #   uses: actions/upload-artifact@v2
+      #   uses: actions/upload-artifact@v4
       #   with:
       #     name: universal-apk
       #     path: moonshot_${{ env.BUILD }}(${{ env.VERSION }}).apk
 
       - name: Upload Play Store artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: play-store-files
           path: |
@@ -95,7 +97,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Download version file
-  #       uses: actions/download-artifact@v2
+  #       uses: actions/download-artifact@v4
   #       with:
   #         name: version
 
@@ -106,7 +108,7 @@ jobs:
   #         echo "BUILD=$BUILD" >> $GITHUB_ENV
 
   #     - name: Download apk from build
-  #       uses: actions/download-artifact@v2
+  #       uses: actions/download-artifact@v4
   #       with:
   #         name: universal-apk
 
@@ -126,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download version file
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: version
 
@@ -137,7 +139,7 @@ jobs:
           echo "BUILD=$BUILD" >> $GITHUB_ENV
 
       - name: Download Play Store artifacts from build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: play-store-files
       

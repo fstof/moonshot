@@ -22,18 +22,18 @@ environment:
 
 dependencies:
   equatable: ^2.0.3
-  firebase_analytics: ^9.1.6
-  firebase_core: ^1.15.0
+  firebase_analytics: ^11.5.0
+  firebase_core: ^3.14.0
   flame: ^1.1.1
-  flame_audio: ^1.0.2
+  flame_audio: ^2.11.6
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.0.1
-  games_services: ^2.0.7
-  google_fonts: ^2.3.2
-  google_mobile_ads: ^1.2.0
+  flutter_bloc: ^9.1.1
+  games_services: ^4.1.1
+  google_fonts: ^6.2.1
+  google_mobile_ads: ^6.0.0
   json_store: ^2.0.0-nullsafety.0
-  velocity_x: ^3.4.0
+  velocity_x: ^4.3.1
 
 
   # The following adds the Cupertino Icons font to your application.

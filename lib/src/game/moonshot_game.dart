@@ -13,7 +13,7 @@ import 'enemy.dart';
 import 'gun.dart';
 import 'moon.dart';
 
-class MoonshotGame extends FlameGame with HasDraggables, HasTappables {
+class MoonshotGame extends FlameGame {
   late Gun gun;
   Background? background;
   late Moon moon;
@@ -29,7 +29,7 @@ class MoonshotGame extends FlameGame with HasDraggables, HasTappables {
   }
 
   @override
-  Future<void>? onLoad() {
+  Future<void>? onLoad() async {
     return super.onLoad();
   }
 

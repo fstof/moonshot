@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -117,7 +116,7 @@ class GameCubit extends Cubit<GameState> {
     firebaseAnalytics.logEvent(
       name: 'retry',
       parameters: {
-        'score': loadedState.score,
+        'score': loadedState.score ?? 0,
       },
     );
 

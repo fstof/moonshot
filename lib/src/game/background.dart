@@ -2,31 +2,31 @@ import 'package:flame/components.dart';
 
 import 'star.dart';
 
-class Background extends PositionComponent with HasGameRef {
+class Background extends PositionComponent with HasGameReference {
   @override
-  Future<void>? onLoad() {
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
-    gameRef.add(Star());
+  Future<void>? onLoad() async {
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
+    game.add(Star());
     return super.onLoad();
   }
 }
